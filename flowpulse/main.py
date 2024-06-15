@@ -79,7 +79,7 @@ def main():
             work_tracking_system = config["general"]["workTrackingSystem"]
             
             if work_tracking_system == "Jira":            
-                # Jira Config
+                print("Using Jira")
                 jira_url = config["jira"]["url"]
                 username = config["jira"]["username"]
                 api_token = config["jira"]["apiToken"]
@@ -89,7 +89,7 @@ def main():
             
                 work_item_service = JiraWorkItemService(jira_url, username, api_token, estimation_field, history_in_days)
             elif work_tracking_system == "Azure DevOps":
-                # Azure DevOps Config
+                print("Using Azure DevOps")
                 org_url = config["azureDevOps"]["organizationUrl"]
                 api_token = config["azureDevOps"]["apiToken"]
                 item_query = config["azureDevOps"]["itemQuery"]

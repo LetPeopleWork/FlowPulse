@@ -62,6 +62,20 @@ class AzureDevOpsWorkItemService:
         estimation = 0
         if self.estimation_field in wiql_result.fields:
             estimation = wiql_result.fields[self.estimation_field]
+            
+        activated_date = self.parse_date(activated_date)
+        closed_date = self.parse_date(closed_date)
         
         return WorkItem(wiql_result.id, title, activated_date, closed_date, estimation)
 
+    def parse_date(self, date):
+        if not date:
+            return None
+        
+        try:
+            return datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%fZ")
+        except:
+            try:
+                return datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
+            except:
+                return None

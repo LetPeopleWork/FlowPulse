@@ -47,4 +47,16 @@ class JiraWorkItemService:
         activated_date = fields.get('created', '')
         estimation = fields.get(self.estimation_field, 0)
         
+        closed_date = self.parse_date(closed_date)
+        activated_date = self.parse_date(activated_date)
+        
         return WorkItem(issue['id'], title, activated_date, closed_date, estimation)
+    
+    def parse_date(self, date):
+        try:
+            # Strip the timezone offset and parse as naive datetime
+            date_str = date[:-5]
+            date_format = '%Y-%m-%dT%H:%M:%S.%f'
+            return datetime.strptime(date_str, date_format)
+        except ValueError:
+            return None
