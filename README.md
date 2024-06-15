@@ -46,6 +46,7 @@ There are general settings, Jira and Azure DevOps specific settings, configurati
 
 | Name                   | Description                          | Sample Value      |
 |------------------------|--------------------------------------|--------------------|
+| workTrackingSystem     | Which Work Tracking System to use.                         | Either "Jira" or "Azure DevOps" |
 | ChartsFolder           | Folder path for the folder where the charts should be saved. Can be relative to the script location (like the default) or a full path to a folder. Folder does not need to exist, it will be created as part of the script.               | Charts             |
 | ShowPlots              | If set to true, the script will stop and show you an interactive version of the chart before continuing.                | false              |
 
