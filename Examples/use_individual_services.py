@@ -54,7 +54,7 @@ print("How Many Forecasts: 50% Chance: {0} - 70% Chance: {1} - 85% Chance: {2} -
 
 # Get "remaining items" based on query
 remaining_items_query = 'issuetype in ("Story", "Bug") AND project = "YourProject" AND status not in ("Done") AND fixVersion = "Release 24.10"'
-remaining_items = len(jira_work_item_service.get_items_via_jql(remaining_items_query))
+remaining_items = len(jira_work_item_service.get_items_via_query(remaining_items_query))
 
 # Forecast When Items will be done (if you specify a target date, you'll get a likelihood)
 target_date = datetime.strptime("2024-08-31", "%Y-%m-%d").date()
