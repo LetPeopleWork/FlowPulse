@@ -1,0 +1,85 @@
+{
+    "general": {        
+        "workTrackingSystem": "AzureDevOps",
+        "chartsFolder": "Charts",
+        "showPlots": false
+    },    
+    "azureDevOps": {
+        "organizationUrl": "https://dev.azure.com/YourOrg",
+        "apiToken": "",
+        "itemQuery": "([System.WorkItemType] = \"User Story\" or [System.WorkItemType] = \"Bug\") AND [System.TeamProject] == \"Your Project\" AND [System.AreaPath] UNDER \"Team Project\\Team Name\"",
+        "historyInDays": 90,
+        "estimationField": "Microsoft.VSTS.Scheduling.StoryPoints"
+    },
+    "jira": {
+        "url": "https://YourOrg.atlassian.net",
+        "username": "",
+        "apiToken": "",
+        "itemQuery": "issuetype in (\"Story\", \"Bug\") AND project = \"YourProject\" AND labels = \"YourTeamLabel\"",
+        "historyInDays": 90,
+        "estimationField": "timetracking.originalEstimate"
+    },
+    "forecasts":[
+      {
+        "name": "Release 24.10",
+        "remainingBacklogQuery": "issuetype in (\"Story\", \"Bug\") AND project = \"YourProject\" AND status not in (\"Done\") AND fixVersion = \"Release 24.10\"",
+        "targetDate": "2024-10-31"
+      },
+      {
+        "name": "Sprint Goal",        
+        "remainingBacklogQuery": "([System.WorkItemType] = \"User Story\" or [System.WorkItemType] = \"Bug\") AND [System.TeamProject] == \"Your Project\" AND ([System.State] <> \"Closed\" AND [System.State] <> \"Removed\") AND [System.AreaPath] UNDER \"Team Project\\Team Name\" AND [System.Tags] CONTAINS \"Sprint Goal\""
+      },
+      {
+        "name": "Sprint Forecast",        
+        "targetDate": 14
+      }
+    ],
+    "cycleTimeScatterPlot": {
+        "generate": true,
+        "history": 30,
+        "chartName": "CycleTime.png",
+        "percentiles": [50, 70, 85, 95],
+        "percentileColors": ["red", "orange", "lightgreen", "darkgreen"]
+    },
+    "workItemAgeScatterPlot": {
+        "generate": true,
+        "history": 30,
+        "chartName": "WorkItemAge.png",
+        "xAxisLines": [5, 10],
+        "xAxisLineColors": ["orange", "red"]
+    },
+    "throughputRunChart": {
+        "generate": true,
+        "history": 30,
+        "unit": "days",
+        "chartName": "Throughput.png"
+    },
+    "workInProcessRunChart": {
+        "generate": true,
+        "history": 30,
+        "chartName": "WorkInProcess.png"
+    },
+    "startedVsFinishedChart": {
+        "generate": true,
+        "history": 30,
+        "chartName": "StartedVsFinished.png",
+        "startedColor": "orange",
+        "closedColor": "green"
+    },
+    "estimationVsCycleTime": {
+        "generate": true,
+        "history": 30,
+        "chartName": "EstimationVsCycleTime.png",
+        "estimationUnit": "Story Points"
+    },
+    "processBehaviourCharts": {
+        "generate": true,
+        "baselineStart": "2024-01-01",
+        "baselineEnd": "2024-01-31",
+        "history": 30,
+        "throughputChartName": "Throughput_PBC.png",
+        "cycleTimeChartName": "CycleTime_PBC.png",
+        "wipChartName": "WorkInProgress_PBC.png",
+        "itemAgeChartName": "WorkItemAge_PBC.png"
+    }
+}
