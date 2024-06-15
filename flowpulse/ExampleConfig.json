@@ -1,6 +1,6 @@
 {
     "general": {        
-        "workTrackingSystem": "AzureDevOps",
+        "workTrackingSystem": "Azure DevOps",
         "chartsFolder": "Charts",
         "showPlots": false
     },    
