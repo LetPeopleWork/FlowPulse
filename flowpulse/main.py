@@ -223,10 +223,10 @@ def main():
             print("🛈 Want to learn more about how all of this works? Check out out website! 🛈")
             print("🔗 https://letpeople.work 🔗")
     except Exception as exception:
-        print("Error while executing jiraflow:")
+        print("Error while executing flowpulse:")
         print(exception)
         
-        print("🪲 If the problem cannot be solved, consider opening an issue on GitHub: https://github.com/LetPeopleWork/jiraflow/issues 🪲")
+        print("🪲 If the problem cannot be solved, consider opening an issue on GitHub: https://github.com/LetPeopleWork/flowpulse/issues 🪲")
 
 if __name__ == "__main__":    
     main()
