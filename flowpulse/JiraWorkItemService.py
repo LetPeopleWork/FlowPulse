@@ -15,6 +15,41 @@ class JiraWorkItemService:
         
         starting_date = (datetime.now(pytz.utc) - timedelta(backlog_history)).strftime("%Y-%m-%d")
         self.starting_date_statement = f'AND updated >= "{starting_date}"'
+        
+        
+    def fetch_issues(self, jql, fields, max_results=100):
+        start_at = 0
+        all_issues = []
+        
+        query_url = f'{self.jira_url}/rest/api/2/search'
+
+        while True:
+            params = {
+                'jql': jql,
+                'startAt': start_at,
+                'maxResults': max_results,
+                'fields': fields,
+            }
+            
+            response = requests.get(
+                query_url,
+                auth=self.auth,
+                params=params
+            )
+            response.raise_for_status()  # Raise an exception for HTTP errors
+            data = response.json()
+            
+            issues = data.get('issues', [])
+            all_issues.extend(issues)
+
+            # Check if we have fetched all issues
+            if start_at + max_results >= data['total']:
+                break
+
+            # Update startAt for the next batch of results
+            start_at += max_results
+
+        return all_issues
     
     def get_items_via_query(self, jql_string):
         work_items = []
@@ -22,16 +57,11 @@ class JiraWorkItemService:
         jql = f'{jql_string} {self.starting_date_statement}'
         print(f'Executing following query: {jql}')
         
-        query_url = f'{self.jira_url}/rest/api/2/search'
-        params = {
-            'jql': jql,
-            'fields': 'id,key,summary,updated,created,' + self.estimation_field
-        }
+        fields = 'id,key,summary,updated,created,' + self.estimation_field
         
-        response = requests.get(query_url, params=params, auth=self.auth)
-        response.raise_for_status()
+        issues = self.fetch_issues(jql, fields)
         
-        issues = response.json().get('issues', [])
+        print("Found {0} issues".format(len(issues)))
         
         for issue in issues:
             work_item = self.convert_to_work_item(issue)
