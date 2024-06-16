@@ -220,7 +220,7 @@ def main():
             print()
             print()
             print()
-            print("🛈 Want to learn more about how all of this works? Check out out website! 🛈")
+            print("🛈 Want to learn more about how all of this works? Check out our website! 🛈")
             print("🔗 https://letpeople.work 🔗")
     except Exception as exception:
         print("Error while executing flowpulse:")
