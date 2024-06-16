@@ -22,6 +22,7 @@ class JiraWorkItemService:
         all_issues = []
         
         query_url = f'{self.jira_url}/rest/api/2/search'
+        print("Fetching Issues from {0}".format(query_url))
 
         while True:
             params = {
@@ -36,17 +37,15 @@ class JiraWorkItemService:
                 auth=self.auth,
                 params=params
             )
-            response.raise_for_status()  # Raise an exception for HTTP errors
+            response.raise_for_status() 
             data = response.json()
             
             issues = data.get('issues', [])
             all_issues.extend(issues)
 
-            # Check if we have fetched all issues
             if start_at + max_results >= data['total']:
                 break
-
-            # Update startAt for the next batch of results
+            
             start_at += max_results
 
         return all_issues
