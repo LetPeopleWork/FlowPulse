@@ -156,9 +156,13 @@ def main():
 
             def create_cycle_time_scatterplot():
                 chart_config = config["cycleTimeScatterPlot"]
+                
+                trend_settings = None
+                if "trend_settings" in chart_config:
+                    trend_settings = chart_config["trend_settings"]
 
                 if chart_config["generate"]:
-                    flow_metrics_service.plot_cycle_time_scatterplot(work_items, chart_config["history"], chart_config["percentiles"], chart_config["percentileColors"], chart_config["chartName"])
+                    flow_metrics_service.plot_cycle_time_scatterplot(work_items, chart_config["history"], chart_config["percentiles"], chart_config["percentileColors"], chart_config["chartName"], trend_settings)
 
             def create_work_item_age_scatterplot():
                 chart_config = config["workItemAgeScatterPlot"]

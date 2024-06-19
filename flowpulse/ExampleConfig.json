@@ -39,7 +39,8 @@
         "history": 30,
         "chartName": "CycleTime.png",
         "percentiles": [50, 70, 85, 95],
-        "percentileColors": ["red", "orange", "lightgreen", "darkgreen"]
+        "percentileColors": ["red", "orange", "lightgreen", "darkgreen"],
+        "trend_settings":  [70, 10, "purple"]
     },
     "workItemAgeScatterPlot": {
         "generate": true,
