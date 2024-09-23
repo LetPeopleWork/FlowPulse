@@ -2,14 +2,14 @@ from setuptools import setup, find_packages
 
 setup(
     name='flowpulse',
-    version='1.0.3',
+    version='1.0.4',
     packages=find_packages(),
     include_package_data=True,
     package_data={
         'flowpulse': ["ExampleConfig.json"],
     },
     install_requires=[
-        "argparse", "flowmetricscsv", "montecarlocsv", "requests", "azure-devops"
+        "argparse", "flowmetricscsv>=1.0.1", "montecarlocsv", "requests", "azure-devops"
     ],
     entry_points={
         'console_scripts': [
