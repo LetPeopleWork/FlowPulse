@@ -76,6 +76,9 @@ class JiraWorkItemService:
         activated_date = fields.get('created', '')
         estimation = fields.get(self.estimation_field, 0)
         
+        if estimation is None:
+            estimation = 0
+        
         closed_date = self.parse_date(closed_date)
         activated_date = self.parse_date(activated_date)
         
