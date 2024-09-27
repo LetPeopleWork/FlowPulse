@@ -82,7 +82,7 @@ class JiraWorkItemService:
         closed_date = self.parse_date(closed_date)
         activated_date = self.parse_date(activated_date)
         
-        return WorkItem(issue['id'], title, activated_date, closed_date, estimation)
+        return WorkItem(issue['key'], title, activated_date, closed_date, estimation)
     
     def parse_date(self, date):
         try:
