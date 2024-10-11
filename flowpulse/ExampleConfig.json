@@ -8,7 +8,7 @@
         "organizationUrl": "https://dev.azure.com/YourOrg",
         "apiToken": "",
         "itemQuery": "([System.WorkItemType] = \"User Story\" or [System.WorkItemType] = \"Bug\") AND [System.TeamProject] == \"Your Project\" AND [System.AreaPath] UNDER \"Team Project\\Team Name\"",
-        "historyInDays": 90,
+        "history": 90,
         "estimationField": "Microsoft.VSTS.Scheduling.StoryPoints"
     },
     "jira": {
@@ -16,7 +16,7 @@
         "username": "",
         "apiToken": "",
         "itemQuery": "issuetype in (\"Story\", \"Bug\") AND project = \"YourProject\" AND labels = \"YourTeamLabel\"",
-        "historyInDays": 90,
+        "history": 90,
         "estimationField": "timetracking.originalEstimate"
     },
     "forecasts":[
@@ -36,7 +36,7 @@
     ],
     "cycleTimeScatterPlot": {
         "generate": true,
-        "history": 30,
+        "history": "2024-09-01",
         "chartName": "CycleTime.png",
         "percentiles": [50, 70, 85, 95],
         "percentileColors": ["red", "orange", "lightgreen", "darkgreen"],

@@ -62,7 +62,7 @@ In order use `flowpulse` with Jira, you must specify against which Jira instance
 | username           | The user that shall be used for exeucting the queries.               |              |
 | apiToken              | [Personal Access Token](https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html) to access the data in your organization             | ""              |
 | itemQuery           | The query to get your teams items. Note that this should contain all items that are relevant for your team, closed, in progress, and not started. Check out the [JQL reference](https://www.atlassian.com/blog/jira/jql-the-most-flexible-way-to-search-jira-14) if you need support.             | issuetype in (\"Story\", \"Bug\") AND project = \"YourProject\" AND labels = \"YourTeamLabel\"             |
-| historyInDays           | How many days in the past you look for items               | 90             |
+| history           | Number of days you look back for items (e.g. "90" for last 90 days), or date in the format "YYYY-MM-dd" (2024-08-19) to include all items since that date.               | 90             |
 | estimationField           | Which field is holding the estimates. This might be a custom field, depending on your process.            | timetracking.originalEstimate             |
 
 
@@ -75,7 +75,7 @@ In order use `flowpulse` with Azure DevOps, you must specify against which Azure
 | organizationUrl           | The url to your Azure DevOps Organization. Replace _YourOrg_ with your actual organization name.               | https://dev.azure.com/YourOrg             |
 | apiToken              | [Personal Access Token](https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=Windows) to access the data in your organization             | ""              |
 | itemQuery           | The query to get your teams items. Note that this should contain all items that are relevant for your team, closed, in progress, and not started. Check out the [WIQL reference](https://learn.microsoft.com/en-us/azure/devops/boards/queries/wiql-syntax?view=azure-devops) if you need support.             | ([System.WorkItemType] = \"User Story\" or [System.WorkItemType] = \"Bug\") AND [System.TeamProject] == \"Your Project\" AND [System.AreaPath] UNDER \"Team Project\\\\Team Name\"             |
-| historyInDays           | How many days in the past you look for items               | 90             |
+| history           | Number of days you look back for items (e.g. "90" for last 90 days), or date in the format "YYYY-MM-dd" (2024-08-19) to include all items since that date.            | 90             |
 | estimationField           | Which field is holding the estimates. You can see the "reference Name" for the fields if you browse to *https://dev.azure.com/%7Borganization%7D/%7Bproject%7D/_apis/wit/fields?api-version=7.1-preview.3* - and insert your organization and project            | Microsoft.VSTS.Scheduling.StoryPoints             |
 
 

@@ -60,8 +60,6 @@ class JiraWorkItemService:
         
         issues = self.fetch_issues(jql, fields)
         
-        print("Found {0} issues".format(len(issues)))
-        
         for issue in issues:
             work_item = self.convert_to_work_item(issue)
             work_items.append(work_item)
