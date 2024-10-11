@@ -56,7 +56,7 @@ class JiraWorkItemService:
         jql = f'{jql_string} {self.starting_date_statement}'
         print(f'Executing following query: {jql}')
         
-        fields = 'id,key,summary,updated,created,' + self.estimation_field
+        fields = 'id,key,summary,resolutiondate,created,' + self.estimation_field
         
         issues = self.fetch_issues(jql, fields)
         
@@ -72,14 +72,16 @@ class JiraWorkItemService:
         fields = issue['fields']
         
         title = fields.get('summary', '')
-        closed_date = fields.get('updated', '')
+        closed_date = fields.get('resolutiondate', '')
         activated_date = fields.get('created', '')
         estimation = fields.get(self.estimation_field, 0)
         
         if estimation is None:
             estimation = 0
-        
-        closed_date = self.parse_date(closed_date)
+            
+        if closed_date is not None:
+            closed_date = self.parse_date(closed_date)
+            
         activated_date = self.parse_date(activated_date)
         
         return WorkItem(issue['key'], title, activated_date, closed_date, estimation)
