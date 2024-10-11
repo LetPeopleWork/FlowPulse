@@ -242,7 +242,7 @@ def main():
 
 def parse_history_argument(work_tracking_system, config):
     try:
-        history = int(config[work_tracking_system]["history"])
+        history = config[work_tracking_system]["history"]
     except:
         # Backward compatibility for using old parameter name
         history = int(config[work_tracking_system]["historyInDays"])
