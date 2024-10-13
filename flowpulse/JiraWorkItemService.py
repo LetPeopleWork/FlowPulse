@@ -59,7 +59,7 @@ class JiraWorkItemService:
     def get_items_via_query(self, jql_string):
         work_items = []
         
-        jql = f'{jql_string} {self.starting_date_statement} AND statusCategory in ("In Progress", "Done")'
+        jql = f'{jql_string} {self.starting_date_statement}'
         print(f'Executing following query: {jql}')
         
         fields = 'id,key,summary,resolutiondate,created,status,' + self.estimation_field

@@ -124,6 +124,11 @@ def main():
                 monte_carlo_service = MonteCarloService(history_in_days, False)
                 
                 closed_items = [item for item in work_items if item.closed_date is not None]
+                
+                if len(closed_items) == 0:
+                    print("No closed items found with specified configuration - skipping forecasts")
+                    return
+                
                 throughput_history = monte_carlo_service.create_closed_items_history(closed_items)
                 
                 for forecast in forecasts:                    
