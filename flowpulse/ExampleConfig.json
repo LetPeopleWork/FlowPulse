@@ -17,7 +17,8 @@
         "apiToken": "",
         "itemQuery": "issuetype in (\"Story\", \"Bug\") AND project = \"YourProject\" AND labels = \"YourTeamLabel\"",
         "history": 90,
-        "estimationField": "timetracking.originalEstimate"
+        "estimationField": "timetracking.originalEstimate",
+        "anonymizeLabel": false
     },
     "forecasts":[
       {

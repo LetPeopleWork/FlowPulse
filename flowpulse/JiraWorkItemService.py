@@ -7,12 +7,13 @@ class JiraWorkItemService:
     
     in_progress_status_categories = ["In Progress", "Done"]
     
-    def __init__(self, jira_url, username, api_token, estimation_field, backlog_history):
+    def __init__(self, jira_url, username, api_token, estimation_field, backlog_history, anonymize_label):
         self.jira_url = jira_url
         self.username = username
         self.api_token = api_token
         self.estimation_field = estimation_field
         self.backlog_history = backlog_history
+        self.anonymize_label = anonymize_label
         self.auth = (username, api_token)
         
         starting_date = (datetime.now(pytz.utc) - timedelta(backlog_history)).strftime("%Y-%m-%d")
@@ -73,6 +74,10 @@ class JiraWorkItemService:
 
     def convert_to_work_item(self, issue):        
         issue_key = issue['key']
+        
+        if self.anonymize_label:
+            issue_key = self.anonymize_issue_key(issue_key)
+        
         fields = issue['fields']        
         
         title = fields.get('summary', '')
@@ -124,3 +129,7 @@ class JiraWorkItemService:
         response = requests.get(request_url, auth=self.auth)
         response.raise_for_status()
         return {status['name']: status['statusCategory']['key'] for status in response.json()}
+    
+    def anonymize_issue_key(self, issue_key):
+        parts = issue_key.split("-")
+        return parts[-1] if len(parts) > 1 else issue_key

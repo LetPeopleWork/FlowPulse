@@ -86,9 +86,14 @@ def main():
                 item_query = config["jira"]["itemQuery"]
                 estimation_field = config["jira"]["estimationField"]
                 
+                try:
+                    anonymize_label = config["jira"]["anonymizeLabel"]
+                except:
+                    anonymize_label = False
+                
                 history_in_days = parse_history_argument("jira", config)
             
-                work_item_service = JiraWorkItemService(jira_url, username, api_token, estimation_field, history_in_days)
+                work_item_service = JiraWorkItemService(jira_url, username, api_token, estimation_field, history_in_days, anonymize_label)
             elif work_tracking_system == "Azure DevOps":
                 print("Using Azure DevOps")
                 org_url = config["azureDevOps"]["organizationUrl"]

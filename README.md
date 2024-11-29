@@ -64,6 +64,7 @@ In order use `flowpulse` with Jira, you must specify against which Jira instance
 | itemQuery           | The query to get your teams items. Note that this should contain all items that are relevant for your team, closed, in progress, and not started. Check out the [JQL reference](https://www.atlassian.com/blog/jira/jql-the-most-flexible-way-to-search-jira-14) if you need support.             | issuetype in (\"Story\", \"Bug\") AND project = \"YourProject\" AND labels = \"YourTeamLabel\"             |
 | history           | Number of days you look back for items (e.g. "90" for last 90 days), or date in the format "YYYY-MM-dd" (2024-08-19) to include all items since that date.               | 90             |
 | estimationField           | Which field is holding the estimates. This might be a custom field, depending on your process.            | timetracking.originalEstimate             |
+| anonymizeLabel           | Anonymizes the labels in the charts, by not using the full issue key, but just the numbers.            | true or false             |
 
 
 ### Azure DevOps Settings
