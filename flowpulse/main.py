@@ -2,6 +2,7 @@ import argparse
 import os
 import shutil
 import json
+import csv
 
 from datetime import datetime, timedelta
 
@@ -108,13 +109,14 @@ def main():
                 raise Exception("Work Tracking System {0} not supported. Supported values are 'Jira' and 'Azure DevOps'".format(work_tracking_system))
             
             work_items = work_item_service.get_items_via_query(item_query)
-            work_items = [item for item in work_items if item.started_date is not None]
+            work_items = [item for item in work_items if item.started_date is not None]     
             
             # General Config
             show_plots = config["general"]["showPlots"]
             charts_folder = config["general"]["chartsFolder"]
             
-            flow_metrics_service = FlowMetricsService(show_plots, charts_folder)
+            flow_metrics_service = FlowMetricsService(show_plots, charts_folder)            
+            write_workitems_to_csv(config, work_items, charts_folder)           
             
             print("Creating Charts as per the configuration...")
             print("----------------------------------------------------------------")   
@@ -262,6 +264,38 @@ def parse_history_argument(work_tracking_system, config):
         print("=============")
         
     return parse_history(history)
+
+def write_workitems_to_csv(config, work_items, charts_folder):
+    try:
+        csv_file_name = config["general"]["rawDataCSV"]
+    except:
+        csv_file_name = ""
+        
+    if csv_file_name:
+        csv_file_path = os.path.join(charts_folder, csv_file_name)
+        with open(csv_file_path, mode='w', newline='') as csv_file:
+            writer = csv.writer(csv_file)
+            
+            writer.writerow([
+                'id', 'title', 'estimation', 'started_date', 'closed_date', 
+                'work_item_age', 'cycle_time', 'state_changed_date'
+            ])
+        
+            for item in work_items:
+                row = [
+                    str(item.id),
+                    str(item.title),
+                    str(item.estimation),
+                    item.started_date.date().isoformat() if item.started_date else "",
+                    item.closed_date.date().isoformat() if item.closed_date else "",
+                    str(item.work_item_age) if item.work_item_age is not None else "",
+                    str(item.cycle_time) if item.cycle_time is not None else "",
+                    item.started_date.date().isoformat() if item.started_date else "",
+                ]
+                
+                writer.writerow(row)
+        
+        print(f"Work items exported to {csv_file_path}")
 
 def parse_history(history):
     try:

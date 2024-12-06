@@ -52,6 +52,7 @@ There are general settings, Jira and Azure DevOps specific settings, configurati
 | workTrackingSystem     | Which Work Tracking System to use.                         | Either "Jira" or "Azure DevOps" |
 | ChartsFolder           | Folder path for the folder where the charts should be saved. Can be relative to the script location (like the default) or a full path to a folder. Folder does not need to exist, it will be created as part of the script.               | Charts             |
 | ShowPlots              | If set to true, the script will stop and show you an interactive version of the chart before continuing.                | false              |
+| rawDataCSV              | If specified, the work items returned by the query will additionally be stored in a csv file within the charts folder.                | workitems.csv     |
 
 ### Jira Settings
 In order use `flowpulse` with Jira, you must specify against which Jira instance you are working. For this you need a url, as well as a [Personal Access Token](https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html) and your username. Furthermore you have to specify a query that gets the items of the team(s) you are interested in as well as how many days into the past you are interested in. Last but not least, you can specify which field you are using for estimates. The queries are written in [JQL](https://www.atlassian.com/blog/jira/jql-the-most-flexible-way-to-search-jira-14).
