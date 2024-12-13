@@ -4,6 +4,9 @@ import shutil
 import json
 import csv
 
+import requests
+from importlib.metadata import version
+
 from datetime import datetime, timedelta
 
 from FlowMetricsCSV.FlowMetricsService import FlowMetricsService
@@ -28,6 +31,26 @@ def print_logo():
     """
     print(logo)
     
+def check_for_updates(package_name):
+    try:
+        current_version = version(package_name)
+
+        # Query PyPI for the latest version
+        response = requests.get(f"https://pypi.org/pypi/{package_name}/json")
+        response.raise_for_status()
+        latest_version = response.json()["info"]["version"]
+
+        # Compare versions
+        if current_version != latest_version:
+            print("------- Update Available -----------")
+            print(f"Update available: {latest_version} (current: {current_version})")
+            print(f"Run the following command to upgrade: 'python -m pip install --upgrade {package_name}'")
+            print("------- Update Available -----------")
+
+    except Exception:
+        print("Error checking for updates - ignoring")
+
+
 def copy_default_config(script_dir):        
     default_config_file = os.path.join(script_dir, "ExampleConfig.json")
     
@@ -56,6 +79,14 @@ def read_config(file_path):
 def main():
     try:
         print_logo()
+        
+        package_name = "flowpulse"
+        current_version = version(package_name)
+        
+        print("================================================================")
+        print("{0}@{1}".format(package_name, current_version))
+        print("================================================================")  
+
         
         script_dir = os.path.dirname(os.path.abspath(__file__))
         
@@ -242,7 +273,7 @@ def main():
             run_forecasts()
 
             print()
-            print()
+            check_for_updates(package_name)
             print()
             print("🛈 Want to learn more about how all of this works? Check out our website! 🛈")
             print("🔗 https://letpeople.work 🔗")
