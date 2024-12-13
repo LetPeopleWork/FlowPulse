@@ -149,7 +149,7 @@ def main():
                 
                 history_in_days = parse_history_argument("azureDevOps", config, today)
                 
-                work_item_service = AzureDevOpsWorkItemService(org_url, api_token, estimation_field, history_in_days = parse_history_argument("jira", config, today))
+                work_item_service = AzureDevOpsWorkItemService(org_url, api_token, estimation_field, history_in_days)
             else:
                 raise Exception("Work Tracking System {0} not supported. Supported values are 'Jira' and 'Azure DevOps'".format(work_tracking_system))
             
@@ -343,7 +343,7 @@ def parse_history(history, today):
         history = int(history)
         print("Use rolling history of the last {0} days".format(history))
     except ValueError:
-        history_start = datetime.strptime(history, "%Y-%m-%d").date()
+        history_start = datetime.strptime(history, "%Y-%m-%d")
         history = (today - history_start).days
         print("Using history with fixed start date {0} - History is {1} days".format(history_start, history))
             
