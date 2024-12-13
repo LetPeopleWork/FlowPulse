@@ -108,6 +108,20 @@ def main():
             print("================================================================")
             config = read_config(config_path)
             
+            # General Config
+            show_plots = config["general"]["showPlots"]
+            charts_folder = config["general"]["chartsFolder"]
+                        
+            today = datetime.today()
+            try:
+                today_argument = config["general"]["today"]
+                
+                if today_argument:
+                    today = datetime.strptime(today_argument, "%Y-%m-%d")
+            except:
+                # No override for todays date
+                print("No override for today")
+            
             work_tracking_system = config["general"]["workTrackingSystem"]
             
             if work_tracking_system == "Jira":            
@@ -123,7 +137,7 @@ def main():
                 except:
                     anonymize_label = False
                 
-                history_in_days = parse_history_argument("jira", config)
+                history_in_days = parse_history_argument("jira", config, today)
             
                 work_item_service = JiraWorkItemService(jira_url, username, api_token, estimation_field, history_in_days, anonymize_label)
             elif work_tracking_system == "Azure DevOps":
@@ -133,20 +147,16 @@ def main():
                 item_query = config["azureDevOps"]["itemQuery"]
                 estimation_field = config["azureDevOps"]["estimationField"]
                 
-                history_in_days = parse_history_argument("azureDevOps", config)
+                history_in_days = parse_history_argument("azureDevOps", config, today)
                 
-                work_item_service = AzureDevOpsWorkItemService(org_url, api_token, estimation_field, history_in_days = parse_history_argument("jira", config))
+                work_item_service = AzureDevOpsWorkItemService(org_url, api_token, estimation_field, history_in_days = parse_history_argument("jira", config, today))
             else:
                 raise Exception("Work Tracking System {0} not supported. Supported values are 'Jira' and 'Azure DevOps'".format(work_tracking_system))
             
             work_items = work_item_service.get_items_via_query(item_query)
             work_items = [item for item in work_items if item.started_date is not None]     
             
-            # General Config
-            show_plots = config["general"]["showPlots"]
-            charts_folder = config["general"]["chartsFolder"]
-            
-            flow_metrics_service = FlowMetricsService(show_plots, charts_folder)            
+            flow_metrics_service = FlowMetricsService(show_plots, charts_folder, today)            
             write_workitems_to_csv(config, work_items, charts_folder)           
             
             print("Creating Charts as per the configuration...")
@@ -159,7 +169,7 @@ def main():
             def run_forecasts():
                 forecasts = config["forecasts"]
                 
-                monte_carlo_service = MonteCarloService(history_in_days, False)
+                monte_carlo_service = MonteCarloService(history_in_days, today.date(), False)
                 
                 closed_items = [item for item in work_items if item.closed_date is not None]
                 
@@ -185,7 +195,7 @@ def main():
                     
                     if target_date:
                         if isinstance(target_date, int):
-                            target_date = (datetime.now() + timedelta(target_date)).date()
+                            target_date = (today + timedelta(target_date)).date()
                         else:
                             target_date = datetime.strptime(target_date, "%Y-%m-%d").date()
                     else:
@@ -207,49 +217,49 @@ def main():
                     trend_settings = chart_config["trend_settings"]
 
                 if chart_config["generate"]:
-                    history = parse_history(chart_config["history"])
+                    history = parse_history(chart_config["history"], today)
                     flow_metrics_service.plot_cycle_time_scatterplot(work_items, history, chart_config["percentiles"], chart_config["percentileColors"], chart_config["chartName"], trend_settings)
 
             def create_work_item_age_scatterplot():
                 chart_config = config["workItemAgeScatterPlot"]
 
                 if chart_config["generate"]:
-                    history = parse_history(chart_config["history"])
+                    history = parse_history(chart_config["history"], today)
                     flow_metrics_service.plot_work_item_age_scatterplot(work_items, history, chart_config["xAxisLines"], chart_config["xAxisLineColors"], chart_config["chartName"])
 
             def create_throughput_run_chart():
                 chart_config = config["throughputRunChart"]
 
                 if chart_config["generate"]:
-                    history = parse_history(chart_config["history"])
+                    history = parse_history(chart_config["history"], today)
                     flow_metrics_service.plot_throughput_run_chart(work_items, history, chart_config["chartName"], chart_config["unit"])            
 
             def create_work_in_process_run_chart():
                 chart_config = config["workInProcessRunChart"]
 
                 if chart_config["generate"]:
-                    history = parse_history(chart_config["history"])
+                    history = parse_history(chart_config["history"], today)
                     flow_metrics_service.plot_work_in_process_run_chart(work_items, history, chart_config["chartName"])
 
             def create_work_started_vs_finished_chart():
                 chart_config = config["startedVsFinishedChart"]
 
                 if chart_config["generate"]:
-                    history = parse_history(chart_config["history"])
+                    history = parse_history(chart_config["history"], today)
                     flow_metrics_service.plot_work_started_vs_finished_chart(work_items, history, chart_config["startedColor"], chart_config["closedColor"], chart_config["chartName"])
 
             def create_estimation_vs_cycle_time_chart():
                 chart_config = config["estimationVsCycleTime"]
 
                 if chart_config["generate"]:
-                    history = parse_history(chart_config["history"])
+                    history = parse_history(chart_config["history"], today)
                     flow_metrics_service.plot_estimation_vs_cycle_time_scatterplot(work_items, history, chart_config["chartName"], chart_config["estimationUnit"])
 
             def create_process_behaviour_charts():
                 chart_config = config["processBehaviourCharts"]
 
                 if chart_config["generate"]:
-                    history = parse_history(chart_config["history"])
+                    history = parse_history(chart_config["history"], today)
                     baseline_start = datetime.strptime(chart_config["baselineStart"], "%Y-%m-%d")
                     baseline_end = datetime.strptime(chart_config["baselineEnd"], "%Y-%m-%d")
 
@@ -283,7 +293,7 @@ def main():
         
         print("🪲 If the problem cannot be solved, consider opening an issue on GitHub: https://github.com/LetPeopleWork/flowpulse/issues 🪲")
 
-def parse_history_argument(work_tracking_system, config):
+def parse_history_argument(work_tracking_system, config, today):
     try:
         history = config[work_tracking_system]["history"]
     except:
@@ -294,7 +304,7 @@ def parse_history_argument(work_tracking_system, config):
         print("You are using the old parameter 'historyInDays' - please switch to the new name 'history'")
         print("=============")
         
-    return parse_history(history)
+    return parse_history(history, today)
 
 def write_workitems_to_csv(config, work_items, charts_folder):
     try:
@@ -328,13 +338,12 @@ def write_workitems_to_csv(config, work_items, charts_folder):
         
         print(f"Work items exported to {csv_file_path}")
 
-def parse_history(history):
+def parse_history(history, today):
     try:
         history = int(history)
         print("Use rolling history of the last {0} days".format(history))
     except ValueError:
         history_start = datetime.strptime(history, "%Y-%m-%d").date()
-        today = datetime.today().date()
         history = (today - history_start).days
         print("Using history with fixed start date {0} - History is {1} days".format(history_start, history))
             

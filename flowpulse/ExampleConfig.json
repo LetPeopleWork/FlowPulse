@@ -3,7 +3,8 @@
         "workTrackingSystem": "Azure DevOps",
         "chartsFolder": "Charts",
         "showPlots": false,
-        "rawDataCSV": "workitems.csv"
+        "rawDataCSV": "workitems.csv",
+        "today": null
     },    
     "azureDevOps": {
         "organizationUrl": "https://dev.azure.com/YourOrg",

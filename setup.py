@@ -9,7 +9,7 @@ setup(
         'flowpulse': ["ExampleConfig.json"],
     },
     install_requires=[
-        "argparse", "flowmetricscsv>=1.0.3", "montecarlocsv>=1.0.3", "requests", "azure-devops"
+        "argparse", "flowmetricscsv>=1.0.4", "montecarlocsv>=1.0.5", "requests", "azure-devops"
     ],
     entry_points={
         'console_scripts': [
