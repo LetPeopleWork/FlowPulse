@@ -1,19 +1,18 @@
-import argparse
 import os
 import shutil
 import json
 import csv
+import sys
 
 import requests
 from importlib.metadata import version
 
 from datetime import datetime, timedelta
 
-from FlowMetricsCSV.FlowMetricsService import FlowMetricsService
-from MonteCarloCSV.MonteCarloService import MonteCarloService
-
-from .JiraWorkItemService import JiraWorkItemService
-from .AzureDevOpsWorkItemService import AzureDevOpsWorkItemService
+from .services.JiraWorkItemService import JiraWorkItemService
+from .services.AzureDevOpsWorkItemService import AzureDevOpsWorkItemService
+from .services.FlowMetricsService import FlowMetricsService
+from .services.MonteCarloService import MonteCarloService
 
 def print_logo():
     logo = r"""
@@ -89,18 +88,17 @@ def main():
 
         
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        
-        parser = argparse.ArgumentParser()
-        parser.add_argument("--ConfigFileNames", type=str, nargs='+', default=[])
-
-        args = parser.parse_args()
-        
-        config_paths = args.ConfigFileNames
+                       
+        config_paths = [arg for arg in sys.argv[1:] if arg.lower().endswith('.json')]
         
         if len(config_paths) < 1:
-            print("No config file specified, copying defaults and using them")
-            copy_default_config(script_dir)
-            config_paths.append("ExampleConfig.json")
+            print("No config files specified as arguments - trying to detect files in same directory")
+            config_paths.extend([f for f in os.listdir(os.getcwd()) if f.lower().endswith('.json')])
+            
+            if len(config_paths) < 1:
+                print("No config file specified - copying defaults and using them")
+                copy_default_config(script_dir)
+                config_paths.append("ExampleConfig.json")
         
         print("Using following configuration files: {0}".format(config_paths))
 
@@ -149,13 +147,11 @@ def main():
                 
                 history_in_days = parse_history_argument("azureDevOps", config, today)
                 
-                work_item_service = AzureDevOpsWorkItemService(org_url, api_token, estimation_field, history_in_days)
+                work_item_service = AzureDevOpsWorkItemService(org_url, api_token, estimation_field, history_in_days, today)
             else:
                 raise Exception("Work Tracking System {0} not supported. Supported values are 'Jira' and 'Azure DevOps'".format(work_tracking_system))
             
-            work_items = work_item_service.get_items_via_query(item_query)
-            work_items = [item for item in work_items if item.started_date is not None]     
-            
+            work_items = work_item_service.get_items_via_query(item_query)            
             flow_metrics_service = FlowMetricsService(show_plots, charts_folder, today)            
             write_workitems_to_csv(config, work_items, charts_folder)           
             

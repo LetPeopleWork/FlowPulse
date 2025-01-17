@@ -21,11 +21,12 @@ class WorkItem:
             self.work_item_age = (datetime.today() - self.started_date).days + 1
 
     def to_dict(self):
-        return {
-            'started_date': self.started_date.date(),
-            'closed_date': self.closed_date.date(),
+        result = {
             'work_item_age': self.work_item_age,
             'cycle_time': self.cycle_time,
-            'closedDate': self.closed_date.date(),
-            'state_changed_date': self.started_date.date(),
         }
+        if self.started_date:
+            result['started_date'] = self.started_date.date()
+        if self.closed_date:
+            result['closed_date'] = self.closed_date.date()
+        return result

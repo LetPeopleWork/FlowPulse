@@ -1,7 +1,7 @@
 from FlowMetricsCSV.FlowMetricsService import FlowMetricsService
 from MonteCarloCSV.MonteCarloService import MonteCarloService
-from flowpulse.JiraWorkItemService import JiraWorkItemService
-from flowpulse.AzureDevOpsWorkItemService import AzureDevOpsWorkItemService
+from flowpulse.services.JiraWorkItemService import JiraWorkItemService
+from flowpulse.services.AzureDevOpsWorkItemService import AzureDevOpsWorkItemService
 
 from datetime import datetime, timedelta
 

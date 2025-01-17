@@ -1,4 +1,4 @@
-from .WorkItem import WorkItem
+from ..WorkItem import WorkItem
 from azure.devops.connection import Connection
 from msrest.authentication import BasicAuthentication
 from azure.devops.v7_1.work_item_tracking.models import Wiql
@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 
 class AzureDevOpsWorkItemService:    
     
-    def __init__(self, org_url, token, estimation_field, backlog_history):
+    def __init__(self, org_url, token, estimation_field, backlog_history, today):
         credentials = BasicAuthentication('', token)
         
         self.organization_url = org_url
@@ -20,8 +20,8 @@ class AzureDevOpsWorkItemService:
         self.connection = Connection(base_url=org_url, creds=credentials)
         self.wit_client = self.connection.clients.get_work_item_tracking_client()
         
-        starting_date = (datetime.now() - timedelta(backlog_history)).strftime("%m-%d-%Y")
-        self.starting_date_statement = "AND [System.ChangedDate] >= '{0}'".format(starting_date)
+        starting_date = (today - timedelta(backlog_history)).strftime("%m-%d-%Y")
+        self.starting_date_statement = f'AND [System.ChangedDate] >= "{starting_date}" AND [System.ChangedDate] <= "{today.strftime("%m-%d-%Y")}"'
     
     def get_items_via_query(self, wiql_string):
         work_items = []        

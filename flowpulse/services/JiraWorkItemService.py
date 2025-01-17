@@ -1,4 +1,4 @@
-from .WorkItem import WorkItem
+from ..WorkItem import WorkItem
 import requests
 from datetime import datetime, timedelta
 import pytz
@@ -16,9 +16,11 @@ class JiraWorkItemService:
         self.anonymize_label = anonymize_label
         self.auth = (username, api_token)
         
-        # Use the provided today parameter instead of datetime.now()
+        if today.tzinfo is None:
+            today = pytz.utc.localize(today)
+            
         starting_date = (today - timedelta(backlog_history)).strftime("%Y-%m-%d")
-        self.starting_date_statement = f'AND updated >= "{starting_date}"'
+        self.starting_date_statement = f'AND updated >= "{starting_date}" AND updated <= "{today.strftime("%Y-%m-%d")}"'
         
         self.status_category_map = self.get_status_categories()
 
