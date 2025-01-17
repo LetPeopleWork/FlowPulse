@@ -139,7 +139,7 @@ def main():
                 
                 history_in_days = parse_history_argument("jira", config, today)
             
-                work_item_service = JiraWorkItemService(jira_url, username, api_token, estimation_field, history_in_days, anonymize_label)
+                work_item_service = JiraWorkItemService(jira_url, username, api_token, estimation_field, history_in_days, anonymize_label, today)
             elif work_tracking_system == "Azure DevOps":
                 print("Using Azure DevOps")
                 org_url = config["azureDevOps"]["organizationUrl"]

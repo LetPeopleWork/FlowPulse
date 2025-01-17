@@ -7,7 +7,7 @@ class JiraWorkItemService:
     
     in_progress_status_categories = ["In Progress", "Done"]
     
-    def __init__(self, jira_url, username, api_token, estimation_field, backlog_history, anonymize_label):
+    def __init__(self, jira_url, username, api_token, estimation_field, backlog_history, anonymize_label, today):
         self.jira_url = jira_url
         self.username = username
         self.api_token = api_token
@@ -16,7 +16,8 @@ class JiraWorkItemService:
         self.anonymize_label = anonymize_label
         self.auth = (username, api_token)
         
-        starting_date = (datetime.now(pytz.utc) - timedelta(backlog_history)).strftime("%Y-%m-%d")
+        # Use the provided today parameter instead of datetime.now()
+        starting_date = (today - timedelta(backlog_history)).strftime("%Y-%m-%d")
         self.starting_date_statement = f'AND updated >= "{starting_date}"'
         
         self.status_category_map = self.get_status_categories()
