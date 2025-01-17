@@ -21,7 +21,9 @@ class AzureDevOpsWorkItemService:
         self.wit_client = self.connection.clients.get_work_item_tracking_client()
         
         starting_date = (today - timedelta(backlog_history)).strftime("%m-%d-%Y")
-        self.starting_date_statement = f'AND [System.ChangedDate] >= "{starting_date}" AND [System.ChangedDate] <= "{today.strftime("%m-%d-%Y")}"'
+        end_date = today.strftime("%m-%d-%Y")
+        
+        self.starting_date_statement = f'AND (([Microsoft.VSTS.Common.ActivatedDate] >= "{starting_date}" AND [Microsoft.VSTS.Common.ActivatedDate] <= "{end_date}") OR ([Microsoft.VSTS.Common.ResolvedDate] >= "{starting_date}" AND [Microsoft.VSTS.Common.ResolvedDate] <= "{end_date}") OR ([Microsoft.VSTS.Common.ClosedDate] >= "{starting_date}" AND [Microsoft.VSTS.Common.ClosedDate] <= "{end_date}"))'
     
     def get_items_via_query(self, wiql_string):
         work_items = []        

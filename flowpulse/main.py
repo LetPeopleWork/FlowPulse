@@ -1,7 +1,6 @@
 import os
 import shutil
 import json
-import csv
 import sys
 
 import requests
@@ -9,10 +8,14 @@ from importlib.metadata import version
 
 from datetime import datetime, timedelta
 
+from .services.CsvService import CsvService
 from .services.JiraWorkItemService import JiraWorkItemService
 from .services.AzureDevOpsWorkItemService import AzureDevOpsWorkItemService
 from .services.FlowMetricsService import FlowMetricsService
 from .services.MonteCarloService import MonteCarloService
+
+
+csv_service = CsvService()
 
 def print_logo():
     logo = r"""
@@ -121,6 +124,7 @@ def main():
                 print("No override for today")
             
             work_tracking_system = config["general"]["workTrackingSystem"]
+            history_in_days = parse_history_argument(config, today)
             
             if work_tracking_system == "Jira":            
                 print("Using Jira")
@@ -135,7 +139,6 @@ def main():
                 except:
                     anonymize_label = False
                 
-                history_in_days = parse_history_argument("jira", config, today)
             
                 work_item_service = JiraWorkItemService(jira_url, username, api_token, estimation_field, history_in_days, anonymize_label, today)
             elif work_tracking_system == "Azure DevOps":
@@ -143,9 +146,7 @@ def main():
                 org_url = config["azureDevOps"]["organizationUrl"]
                 api_token = config["azureDevOps"]["apiToken"]
                 item_query = config["azureDevOps"]["itemQuery"]
-                estimation_field = config["azureDevOps"]["estimationField"]
-                
-                history_in_days = parse_history_argument("azureDevOps", config, today)
+                estimation_field = config["azureDevOps"]["estimationField"]                
                 
                 work_item_service = AzureDevOpsWorkItemService(org_url, api_token, estimation_field, history_in_days, today)
             else:
@@ -178,6 +179,7 @@ def main():
                 for forecast in forecasts:                    
                     print("Running Forecast for {0}".format(forecast["name"]))
                     
+                    target_date = None                    
                     run_mc_when = False
                     run_mc_how_many = False
                     
@@ -213,56 +215,49 @@ def main():
                     trend_settings = chart_config["trend_settings"]
 
                 if chart_config["generate"]:
-                    history = parse_history(chart_config["history"], today)
-                    flow_metrics_service.plot_cycle_time_scatterplot(work_items, history, chart_config["percentiles"], chart_config["percentileColors"], chart_config["chartName"], trend_settings)
+                    flow_metrics_service.plot_cycle_time_scatterplot(work_items, chart_config["percentiles"], chart_config["percentileColors"], chart_config["chartName"], trend_settings)
 
             def create_work_item_age_scatterplot():
                 chart_config = config["workItemAgeScatterPlot"]
 
                 if chart_config["generate"]:
-                    history = parse_history(chart_config["history"], today)
-                    flow_metrics_service.plot_work_item_age_scatterplot(work_items, history, chart_config["xAxisLines"], chart_config["xAxisLineColors"], chart_config["chartName"])
+                    flow_metrics_service.plot_work_item_age_scatterplot(work_items, chart_config["xAxisLines"], chart_config["xAxisLineColors"], chart_config["chartName"])
 
             def create_throughput_run_chart():
                 chart_config = config["throughputRunChart"]
 
                 if chart_config["generate"]:
-                    history = parse_history(chart_config["history"], today)
-                    flow_metrics_service.plot_throughput_run_chart(work_items, history, chart_config["chartName"], chart_config["unit"])            
+                    flow_metrics_service.plot_throughput_run_chart(work_items, chart_config["chartName"], chart_config["unit"])            
 
             def create_work_in_process_run_chart():
                 chart_config = config["workInProcessRunChart"]
 
                 if chart_config["generate"]:
-                    history = parse_history(chart_config["history"], today)
-                    flow_metrics_service.plot_work_in_process_run_chart(work_items, history, chart_config["chartName"])
+                    flow_metrics_service.plot_work_in_process_run_chart(work_items, chart_config["chartName"])
 
             def create_work_started_vs_finished_chart():
                 chart_config = config["startedVsFinishedChart"]
 
                 if chart_config["generate"]:
-                    history = parse_history(chart_config["history"], today)
-                    flow_metrics_service.plot_work_started_vs_finished_chart(work_items, history, chart_config["startedColor"], chart_config["closedColor"], chart_config["chartName"])
+                    flow_metrics_service.plot_work_started_vs_finished_chart(work_items, chart_config["startedColor"], chart_config["closedColor"], chart_config["chartName"])
 
             def create_estimation_vs_cycle_time_chart():
                 chart_config = config["estimationVsCycleTime"]
 
                 if chart_config["generate"]:
-                    history = parse_history(chart_config["history"], today)
-                    flow_metrics_service.plot_estimation_vs_cycle_time_scatterplot(work_items, history, chart_config["chartName"], chart_config["estimationUnit"])
+                    flow_metrics_service.plot_estimation_vs_cycle_time_scatterplot(work_items, chart_config["chartName"], chart_config["estimationUnit"])
 
             def create_process_behaviour_charts():
                 chart_config = config["processBehaviourCharts"]
 
                 if chart_config["generate"]:
-                    history = parse_history(chart_config["history"], today)
                     baseline_start = datetime.strptime(chart_config["baselineStart"], "%Y-%m-%d")
                     baseline_end = datetime.strptime(chart_config["baselineEnd"], "%Y-%m-%d")
 
-                    flow_metrics_service.plot_throughput_process_behaviour_chart(work_items, baseline_start, baseline_end, history, chart_config["throughputChartName"])            
-                    flow_metrics_service.plot_wip_process_behaviour_chart(work_items, baseline_start, baseline_end, history, chart_config["wipChartName"])
-                    flow_metrics_service.plot_cycle_time_process_behaviour_chart(work_items, baseline_start, baseline_end, history, chart_config["cycleTimeChartName"])       
-                    flow_metrics_service.plot_total_age_process_behaviour_chart(work_items, baseline_start, baseline_end, history, chart_config["itemAgeChartName"])                        
+                    flow_metrics_service.plot_throughput_process_behaviour_chart(work_items, baseline_start, baseline_end, history_in_days, chart_config["throughputChartName"])            
+                    flow_metrics_service.plot_wip_process_behaviour_chart(work_items, baseline_start, baseline_end, history_in_days, chart_config["wipChartName"])
+                    flow_metrics_service.plot_cycle_time_process_behaviour_chart(work_items, baseline_start, baseline_end, history_in_days, chart_config["cycleTimeChartName"])       
+                    flow_metrics_service.plot_total_age_process_behaviour_chart(work_items, baseline_start, baseline_end, history_in_days, chart_config["itemAgeChartName"])                        
 
             print("---------------------------")
             print("Creating Charts...")
@@ -289,15 +284,16 @@ def main():
         
         print("🪲 If the problem cannot be solved, consider opening an issue on GitHub: https://github.com/LetPeopleWork/flowpulse/issues 🪲")
 
-def parse_history_argument(work_tracking_system, config, today):
+def parse_history_argument(config, today):
     try:
-        history = config[work_tracking_system]["history"]
+        history = config["general"]["history"]
     except:
         # Backward compatibility for using old parameter name
-        history = int(config[work_tracking_system]["historyInDays"])
+        history = 90
         
         print("=== Warning ===")
         print("You are using the old parameter 'historyInDays' - please switch to the new name 'history'")
+        print("Using default value of 90 instead")
         print("=============")
         
     return parse_history(history, today)
@@ -309,30 +305,7 @@ def write_workitems_to_csv(config, work_items, charts_folder):
         csv_file_name = ""
         
     if csv_file_name:
-        csv_file_path = os.path.join(charts_folder, csv_file_name)
-        with open(csv_file_path, mode='w', newline='') as csv_file:
-            writer = csv.writer(csv_file)
-            
-            writer.writerow([
-                'id', 'title', 'estimation', 'started_date', 'closed_date', 
-                'work_item_age', 'cycle_time', 'state_changed_date'
-            ])
-        
-            for item in work_items:
-                row = [
-                    str(item.id),
-                    str(item.title),
-                    str(item.estimation),
-                    item.started_date.date().isoformat() if item.started_date else "",
-                    item.closed_date.date().isoformat() if item.closed_date else "",
-                    str(item.work_item_age) if item.work_item_age is not None else "",
-                    str(item.cycle_time) if item.cycle_time is not None else "",
-                    item.started_date.date().isoformat() if item.started_date else "",
-                ]
-                
-                writer.writerow(row)
-        
-        print(f"Work items exported to {csv_file_path}")
+        csv_service.write_workitems_to_csv(csv_file_name, work_items, charts_folder)
 
 def parse_history(history, today):
     try:

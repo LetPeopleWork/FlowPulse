@@ -1,11 +1,11 @@
 {
-    "general": {        
+    "general": {
         "workTrackingSystem": "Azure DevOps",
         "chartsFolder": "Charts",
         "showPlots": false,
         "rawDataCSV": "workitems.csv",
         "today": null
-    },    
+    },
     "azureDevOps": {
         "organizationUrl": "https://dev.azure.com/YourOrg",
         "apiToken": "",
@@ -22,35 +22,65 @@
         "estimationField": "timetracking.originalEstimate",
         "anonymizeLabel": false
     },
-    "forecasts":[
-      {
-        "name": "Release 24.10",
-        "remainingBacklogQuery": "issuetype in (\"Story\", \"Bug\") AND project = \"YourProject\" AND status not in (\"Done\") AND fixVersion = \"Release 24.10\"",
-        "targetDate": "2024-10-31"
-      },
-      {
-        "name": "Sprint Goal",        
-        "remainingBacklogQuery": "([System.WorkItemType] = \"User Story\" or [System.WorkItemType] = \"Bug\") AND [System.TeamProject] == \"Your Project\" AND ([System.State] <> \"Closed\" AND [System.State] <> \"Removed\") AND [System.AreaPath] UNDER \"Team Project\\Team Name\" AND [System.Tags] CONTAINS \"Sprint Goal\""
-      },
-      {
-        "name": "Sprint Forecast",        
-        "targetDate": 14
-      }
+    "csv": {
+        "fileName": "ExampleFile.csv",
+        "delimeter": ";",
+        "startedDateColumn": "Activated Date",
+        "closedDateColumn": "Closed Date",
+        "startDateFormat": "%m/%d/%Y %I:%M:%S %p",
+        "closedDateFormat": "",
+        "estimationColumn": "Story Points",
+        "itemTitleColumn": "ID"
+    },
+    "forecasts": [
+        {
+            "name": "Release 24.10",
+            "remainingBacklogQuery": "issuetype in (\"Story\", \"Bug\") AND project = \"YourProject\" AND status not in (\"Done\") AND fixVersion = \"Release 24.10\"",
+            "targetDate": "2024-10-31"
+        },
+        {
+            "name": "Sprint Goal",
+            "remainingBacklogQuery": "([System.WorkItemType] = \"User Story\" or [System.WorkItemType] = \"Bug\") AND [System.TeamProject] == \"Your Project\" AND ([System.State] <> \"Closed\" AND [System.State] <> \"Removed\") AND [System.AreaPath] UNDER \"Team Project\\Team Name\" AND [System.Tags] CONTAINS \"Sprint Goal\""
+        },
+        {
+            "name": "Sprint Forecast",
+            "targetDate": 14
+        }
     ],
     "cycleTimeScatterPlot": {
         "generate": true,
         "history": "2024-09-01",
         "chartName": "CycleTime.png",
-        "percentiles": [50, 70, 85, 95],
-        "percentileColors": ["red", "orange", "lightgreen", "darkgreen"],
-        "trend_settings":  [70, 10, "purple"]
+        "percentiles": [
+            50,
+            70,
+            85,
+            95
+        ],
+        "percentileColors": [
+            "red",
+            "orange",
+            "lightgreen",
+            "darkgreen"
+        ],
+        "trend_settings": [
+            70,
+            10,
+            "purple"
+        ]
     },
     "workItemAgeScatterPlot": {
         "generate": true,
         "history": 30,
         "chartName": "WorkItemAge.png",
-        "xAxisLines": [5, 10],
-        "xAxisLineColors": ["orange", "red"]
+        "xAxisLines": [
+            5,
+            10
+        ],
+        "xAxisLineColors": [
+            "orange",
+            "red"
+        ]
     },
     "throughputRunChart": {
         "generate": true,

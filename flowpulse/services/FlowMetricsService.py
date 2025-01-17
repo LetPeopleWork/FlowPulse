@@ -32,8 +32,8 @@ class FlowMetricsService:
         self.logo = mpimg.imread(logo_path)
 
        
-    def plot_cycle_time_scatterplot(self, items, history, percentiles, percentile_colors, chart_name, trend_settings = None):        
-        print("Creating Cycle Time Scatterplot with following config: History: {0}, Chart Name: {1}, Percentiles: {2}, Percentile Colors: {3}, Trend Settings: {4}".format(history, chart_name, percentiles, percentile_colors, trend_settings))
+    def plot_cycle_time_scatterplot(self, items, percentiles, percentile_colors, chart_name, trend_settings = None):        
+        print("Creating Cycle Time Scatterplot with following config: Chart Name: {0}, Percentiles: {1}, Percentile Colors: {2}, Trend Settings: {3}".format(chart_name, percentiles, percentile_colors, trend_settings))
 
         cycle_times = [item.cycle_time for item in items if item.cycle_time is not None]
 
@@ -41,13 +41,9 @@ class FlowMetricsService:
             print("No closed work items for plotting.")
             return
 
-        if history is not None:
-            # Filter items based on the history parameter
-            end_date = self.today
-            start_date = end_date - timedelta(days=history)
-            items = [item for item in items if item.closed_date and item.started_date and start_date <= item.closed_date <= end_date]
-            cycle_times = [item.cycle_time for item in items if item.cycle_time is not None]
-            dates = [item.closed_date.date() for item in items]
+        items = [item for item in items if item.closed_date and item.started_date]
+        cycle_times = [item.cycle_time for item in items if item.cycle_time is not None]
+        dates = [item.closed_date.date() for item in items]            
 
         if not cycle_times:
             print("No closed work items within the specified history for plotting.")
@@ -104,9 +100,9 @@ class FlowMetricsService:
         if self.show_plots:
             plt.show()
 
-    def plot_work_item_age_scatterplot(self, items, history, x_axis_lines, x_axis_line_colors, chart_name):
-        print("Creating Work Item Scatterplot with following config: History: {0}, Chart Name: {1}, X-Axis Lines: {2}, X-Axis Line Colors: {3}".format(history, chart_name, x_axis_lines, x_axis_line_colors))
-        filtered_items = [item for item in items if item.work_item_age is not None and self.is_date_between_today_and_history(item.started_date, history)]
+    def plot_work_item_age_scatterplot(self, items, x_axis_lines, x_axis_line_colors, chart_name):
+        print("Creating Work Item Scatterplot with following config: Chart Name: {0}, X-Axis Lines: {1}, X-Axis Line Colors: {2}".format(chart_name, x_axis_lines, x_axis_line_colors))
+        filtered_items = [item for item in items if item.work_item_age and item.started_date]
         
         work_item_ages = [item.work_item_age for item in filtered_items]
         if not work_item_ages:
@@ -140,11 +136,7 @@ class FlowMetricsService:
 
         self.add_timestamp(plt)
 
-        if history is not None:
-            # Filter items based on the history parameter for calculating Cycle Time percentiles
-            end_date = self.today
-            start_date = end_date - timedelta(days=history)
-            filtered_items = [item for item in filtered_items if item.closed_date and start_date <= item.closed_date <= end_date]
+        filtered_items = [item for item in filtered_items if item.closed_date]
 
         if len(filtered_items) > 0:            
             for value, color in zip(x_axis_lines, x_axis_line_colors):
@@ -166,15 +158,14 @@ class FlowMetricsService:
         if self.show_plots:
             plt.show()
 
-    def plot_throughput_run_chart(self, items, history, chart_name, x_axis_unit='days'):
-        print("Creating Throughput Run Chart with following config: History: {0}, Chart Name: {1}, Unit: {2}".format(history, chart_name, x_axis_unit))
+    def plot_throughput_run_chart(self, items, chart_name, x_axis_unit='days'):
+        print("Creating Throughput Run Chart with following config: Chart Name: {0}, Unit: {1}".format(chart_name, x_axis_unit))
         
         valid_units = ['days', 'weeks', 'months']
         if x_axis_unit not in valid_units:
             raise ValueError(f"The 'x_axis_unit' parameter should be one of {valid_units}.")
         
-        # Filter items based on the history parameter
-        closed_dates = [item.closed_date.date() for item in items if self.is_date_between_today_and_history(item.closed_date, history)]
+        closed_dates = [item.closed_date.date() for item in items if item.closed_date]
 
         if not closed_dates:
             print("No closed work items for plotting throughput.")
@@ -223,31 +214,25 @@ class FlowMetricsService:
         if self.show_plots:
             plt.show()
             
-    def plot_work_in_process_run_chart(self, items, history, chart_name):
-        print("Creating Work In Process Run Chart with following config: History: {0}, Chart Name: {1}".format(history, chart_name))
+    def plot_work_in_process_run_chart(self, items, chart_name):
+        print("Creating Work In Process Run Chart with following config: Chart Name: {0}".format(chart_name))
 
         if not items:
             print("No work items for plotting work in process.")
             return
 
-        if history is not None:
-            # Filter items based on the history parameter
-            chart_end_date = self.today
-            chart_start_date = chart_end_date - timedelta(days=history)
-            
-            relevant_items = []
-            for item in items:
-                if item.closed_date is not None and item.closed_date <= chart_start_date:
-                    continue
-                
-                if item.started_date is not None and item.started_date <= chart_end_date:
-                    relevant_items.append(item)
+        relevant_items = [item for item in items if item.started_date]
 
         # Set default size to be wider (10 inches width and 6 inches height in this example)
         plt.figure(figsize=(15, 9))
 
         # Create a range of dates representing the specified history
-        history_dates = pd.date_range(chart_end_date - timedelta(days=history-1), chart_end_date)
+        # Get the earliest and latest dates from relevant_items
+        earliest_date = min(item.started_date for item in relevant_items)
+        latest_date = max(item.closed_date if item.closed_date else self.today for item in relevant_items)
+
+        # Create date range from earliest to latest date 
+        history_dates = pd.date_range(earliest_date, latest_date)
 
         # Count the number of items in process for each day
         wip_counts = Counter()
@@ -284,29 +269,23 @@ class FlowMetricsService:
         if self.show_plots:
             plt.show()
 
-    def is_date_between_today_and_history(self, date, history):
-        if date is None:
-            return False
-        
-        return date >= self.today - timedelta(days=history) and date <= self.today
 
-
-    def plot_work_started_vs_finished_chart(self, work_items, history, started_color, closed_color, chart_name):
-        print("Creating Work Started vs. finished chart with following config: History: {0}, Chart Name: {1}, Started Color: {2}, Closed Color: {3}".format(history, chart_name, started_color, closed_color))
+    def plot_work_started_vs_finished_chart(self, work_items, started_color, closed_color, chart_name):
+        print("Creating Work Started vs. finished chart with following config: Chart Name: {0}, Started Color: {1}, Closed Color: {2}".format(chart_name, started_color, closed_color))
 
         # Calculate counts based on weeks
         started_counts = {}
         closed_counts = {}
 
         for item in work_items:
-            if self.is_date_between_today_and_history(item.started_date, history):
+            if item.started_date:
                 started_date_key = item.started_date.date().strftime('%Y-%W')
                 started_counts[started_date_key] = started_counts.get(started_date_key, 0) + 1
                 
                 # Make sure we have the same keys in both dictionaries - keep the existing value
                 closed_counts[started_date_key] = closed_counts.get(started_date_key, 0) + 0
 
-            if self.is_date_between_today_and_history(item.closed_date, history):
+            if item.closed_date:
                 closed_date_key = item.closed_date.date().strftime('%Y-%W')
                 closed_counts[closed_date_key] = closed_counts.get(closed_date_key, 0) + 1
 
@@ -348,8 +327,8 @@ class FlowMetricsService:
         if self.show_plots:
             plt.show()
 
-    def plot_estimation_vs_cycle_time_scatterplot(self, items, history, chart_name, estimation_unit):
-        print("Creating Estimation vs. Cycle Time Scatterplot with the following config: History: {0}, Chart Name: {1}, Estimation Unit: {2}".format(history, chart_name, estimation_unit))
+    def plot_estimation_vs_cycle_time_scatterplot(self, items, chart_name, estimation_unit):
+        print("Creating Estimation vs. Cycle Time Scatterplot with the following config: Chart Name: {0}, Estimation Unit: {1}".format(chart_name, estimation_unit))
         
         # Ignore items without cycle time and without estimation
         filtered_items = [item for item in items if item.cycle_time and item.cycle_time is not None and item.estimation is not None and item.estimation > 0]
@@ -359,14 +338,10 @@ class FlowMetricsService:
         if not cycle_times:
             print("No closed work items for plotting.")
             return
-
-        if history is not None:
-            # Filter items based on the history parameter
-            end_date = self.today
-            start_date = end_date - timedelta(days=history)
-            items = [item for item in filtered_items if item.closed_date and item.started_date and start_date <= item.closed_date <= end_date]
-            cycle_times = [item.cycle_time for item in items]
-            estimations = [item.estimation for item in items]
+        
+        items = [item for item in filtered_items if item.closed_date and item.started_date]
+        cycle_times = [item.cycle_time for item in items]
+        estimations = [item.estimation for item in items]
 
         if not cycle_times:
             print("No closed work items within the specified history for plotting.")
