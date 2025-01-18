@@ -217,11 +217,11 @@ class FlowMetricsService:
     def plot_work_in_process_run_chart(self, items, chart_name):
         print("Creating Work In Process Run Chart with following config: Chart Name: {0}".format(chart_name))
 
-        if not items:
+        relevant_items = [item for item in items if item.started_date]
+
+        if not relevant_items:
             print("No work items for plotting work in process.")
             return
-
-        relevant_items = [item for item in items if item.started_date]
 
         # Set default size to be wider (10 inches width and 6 inches height in this example)
         plt.figure(figsize=(15, 9))

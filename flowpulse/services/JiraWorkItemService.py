@@ -14,13 +14,25 @@ class JiraWorkItemService:
         self.estimation_field = estimation_field
         self.backlog_history = backlog_history
         self.anonymize_label = anonymize_label
-        self.auth = (username, api_token)
+        
+        # Set up auth based on token type
+        if username:
+            self.auth = (username, api_token)
+            self.headers = {}
+        else:
+            # If no username, treat api_token as personal access token
+            self.auth = None
+            self.headers = {"Authorization": f"Bearer {api_token}"}
         
         if today.tzinfo is None:
             today = pytz.utc.localize(today)
             
         starting_date = (today - timedelta(backlog_history)).strftime("%Y-%m-%d")
-        self.starting_date_statement = f'AND updated >= "{starting_date}" AND updated <= "{today.strftime("%Y-%m-%d")}"'
+        
+        # Add one day to today to include today's work
+        end_date = (today + timedelta(days=1)).strftime("%Y-%m-%d")
+        
+        self.starting_date_statement = f'AND updated >= "{starting_date}" AND updated <= "{end_date}"'
         
         self.status_category_map = self.get_status_categories()
 
@@ -28,7 +40,7 @@ class JiraWorkItemService:
         start_at = 0
         all_issues = []
         
-        query_url = f'{self.jira_url}/rest/api/2/search'
+        query_url = f'{self.jira_url}/rest/api/latest/search'
         print(f"Fetching Issues from {query_url}")
 
         while True:
@@ -44,6 +56,7 @@ class JiraWorkItemService:
             
             response = requests.get(
                 query_url,
+                headers=self.headers,
                 auth=self.auth,
                 params=params
             )
@@ -128,8 +141,8 @@ class JiraWorkItemService:
             return None
         
     def get_status_categories(self):
-        request_url = f'{self.jira_url}/rest/api/3/status'
-        response = requests.get(request_url, auth=self.auth)
+        request_url = f'{self.jira_url}/rest/api/2/status'
+        response = requests.get(request_url, auth=self.auth, headers=self.headers)
         response.raise_for_status()
         return {status['name']: status['statusCategory']['key'] for status in response.json()}
     
