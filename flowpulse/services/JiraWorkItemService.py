@@ -7,13 +7,14 @@ class JiraWorkItemService:
     
     in_progress_status_categories = ["In Progress", "Done"]
     
-    def __init__(self, jira_url, username, api_token, estimation_field, backlog_history, anonymize_label, today):
+    def __init__(self, jira_url, username, api_token, estimation_field, backlog_history, anonymize_label, today, jql_string):
         self.jira_url = jira_url
         self.username = username
         self.api_token = api_token
         self.estimation_field = estimation_field
         self.backlog_history = backlog_history
         self.anonymize_label = anonymize_label
+        self.jql_string = jql_string
         
         # Set up auth based on token type
         if username:
@@ -73,10 +74,12 @@ class JiraWorkItemService:
 
         return all_issues
     
-    def get_items_via_query(self, jql_string):
+    def get_items(self, items_query = None):
         work_items = []
+        if not items_query:
+            items_query = self.jql_string
         
-        jql = f'{jql_string} {self.starting_date_statement}'
+        jql = f'{items_query} {self.starting_date_statement}'
         print(f'Executing following query: {jql}')
         
         fields = 'id,key,summary,resolutiondate,created,status,' + self.estimation_field

@@ -163,3 +163,4 @@ cython_debug/
 Charts/*
 ExampleConfig.json
 !flowpulse/ExampleConfig.json
+ExampleFile.csv

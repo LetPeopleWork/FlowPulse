@@ -6,44 +6,72 @@ import random
 
 import csv
 
-class CsvService:    
-              
-    def parse_items(self, file_path, delimiter, started_date_column_name, closed_date_column_name, start_date_format, closed_date_format, estimation_column_name, item_title_column):
-        print("Loading Items from CSV File: '{0}'. Started Date Column Name '{1}', Closed Date Column Name '{2}', Start Date Format '{3}', and Closed Date Format '{4}'".format(file_path, started_date_column_name, closed_date_column_name, start_date_format, closed_date_format))
+class CsvService:
+    
+    def __init__(self, file_path, delimiter, started_date_column_name, closed_date_column_name, 
+                 start_date_format, closed_date_format, estimation_column_name, item_title_column, history_in_days, today):
+        self.file_path = file_path
+        self.delimiter = delimiter
+        self.started_date_column_name = started_date_column_name
+        self.closed_date_column_name = closed_date_column_name
+        self.start_date_format = start_date_format
+        self.closed_date_format = closed_date_format if closed_date_format else start_date_format
+        self.estimation_column_name = estimation_column_name
+        self.item_title_column = item_title_column
+        self.today = today
+        self.history_in_days = history_in_days
+        
+        print("Using following CSV file: {0}".format(self.file_path))
+        if not os.path.isfile(file_path):
+            print("File does not exist. Creating example file")
+            self.write_example_file()    
+
+
+    def get_items(self, items_query = None):
+        print("Loading Items from CSV File: '{0}'. Started Date Column Name '{1}', Closed Date Column Name '{2}', Start Date Format '{3}', and Closed Date Format '{4}'".format(self.file_path, self.started_date_column_name, self.closed_date_column_name, self.start_date_format, self.closed_date_format))
         work_items = []
         
-        with open(file_path, 'r', encoding='utf-8-sig') as file:
-            csv_reader = csv.DictReader(file, delimiter=delimiter)
+        with open(self.file_path, 'r', encoding='utf-8-sig') as file:
+            csv_reader = csv.DictReader(file, delimiter=self.delimiter)
             
             for row in csv_reader:
-                closed_date = row[closed_date_column_name]
+                closed_date = row[self.closed_date_column_name]
                 if closed_date:
-                    closed_date = datetime.strptime(closed_date, closed_date_format)      
+                    closed_date = datetime.strptime(closed_date, self.closed_date_format)      
 
-                started_date = row[started_date_column_name]
+                started_date = row[self.started_date_column_name]
                 if started_date:    
-                    started_date = datetime.strptime(started_date, start_date_format)        
+                    started_date = datetime.strptime(started_date, self.start_date_format)        
 
                 estimation = None
-                if estimation_column_name in row:
-                    raw_estimate = row[estimation_column_name]
+                if self.estimation_column_name in row:
+                    raw_estimate = row[self.estimation_column_name]
                     estimation = 0
 
                     if raw_estimate:
-                        estimation = float(row[estimation_column_name])
+                        estimation = float(row[self.estimation_column_name])
                     
                 item_title = ""
-                if item_title_column in row:
-                    item_title = row[item_title_column]
+                if self.item_title_column in row:
+                    item_title = row[self.item_title_column]
                        
-                work_items.append(WorkItem(started_date, closed_date, item_title, estimation))
+                history_start = self.today - timedelta(days=self.history_in_days)
+                should_include_work_item = started_date and (started_date >= history_start or started_date <= self.today)
+                should_include_work_item = should_include_work_item or (closed_date and (closed_date >= history_start or closed_date <= self.today))
+                
+                if should_include_work_item:
+                    work_items.append(WorkItem(item_title, item_title, started_date, closed_date, estimation))
+        
+        if items_query:
+            print("Items Query not supported for CSV - Loading all items that are NOT closed")
+            work_items = [item for item in work_items if not item.closed_date]
         
         print("Found {0} Items in the CSV".format(len(work_items)))
 
         return work_items
 
-
-    def write_workitems_to_csv(self, csv_file_name, work_items, charts_folder):        
+    @staticmethod
+    def write_workitems_to_csv(csv_file_name, work_items, charts_folder):        
         if csv_file_name:
             csv_file_path = os.path.join(charts_folder, csv_file_name)
             with open(csv_file_path, mode='w', newline='') as csv_file:
@@ -70,13 +98,12 @@ class CsvService:
             
             print(f"Work items exported to {csv_file_path}")
 
-
-    def write_example_file(self, file_path, delimiter, started_date_column_name, closed_date_column_name, start_date_format, closed_date_format, estimation_column_name, item_title_column, today = datetime.today()):
-        print("Writing Example File with random values to {0}".format(file_path))
+    def write_example_file(self):
+        print("Writing Example File with random values to {0}".format(self.file_path))
         
-        with open(file_path, 'w', newline='') as file:
-            writer = csv.writer(file, delimiter=delimiter)
-            field = [started_date_column_name, closed_date_column_name, estimation_column_name, item_title_column]
+        with open(self.file_path, 'w', newline='') as file:
+            writer = csv.writer(file, delimiter=self.delimiter)
+            field = [self.started_date_column_name, self.closed_date_column_name, self.estimation_column_name, self.item_title_column]
             
             # Write Header
             writer.writerow(field)
@@ -85,20 +112,17 @@ class CsvService:
             
             # Generate and write 100 random dates
             for index in range(100):
-                start_date_delta = random.randint(0, 30)
+                start_date_delta = random.randint(10, self.history_in_days + 10)
+                end_date_delta = random.randint(-10, self.history_in_days)
                 
-                random.seed()
+                random_start_date = self.today - timedelta(days=start_date_delta)
+                random_end_date = self.today - timedelta(days=end_date_delta)
                 
-                end_date_delta = random.randint(0, 30)
-                
-                random_start_date = today - timedelta(days=start_date_delta)
-                random_end_date = today - timedelta(days=end_date_delta)
-                
-                started_date = random_start_date.strftime(start_date_format)
+                started_date = random_start_date.strftime(self.start_date_format)
                 end_date = ""
                 
                 if end_date_delta <= start_date_delta:
-                    end_date = random_end_date.strftime(closed_date_format)
+                    end_date = random_end_date.strftime(self.closed_date_format)
                 
                 estimation = random.choice(story_points)
                 

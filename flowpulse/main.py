@@ -4,18 +4,18 @@ import json
 import sys
 
 import requests
+
+SEPARATOR_LINE = "=" * 64
+
 from importlib.metadata import version
 
 from datetime import datetime, timedelta
 
 from .services.CsvService import CsvService
-from .services.JiraWorkItemService import JiraWorkItemService
-from .services.AzureDevOpsWorkItemService import AzureDevOpsWorkItemService
 from .services.FlowMetricsService import FlowMetricsService
 from .services.MonteCarloService import MonteCarloService
+from .services.WorkItemServiceFactory import WorkItemServiceFactory
 
-
-csv_service = CsvService()
 
 def print_logo():
     logo = r"""
@@ -85,9 +85,9 @@ def main():
         package_name = "flowpulse"
         current_version = version(package_name)
         
-        print("================================================================")
+        print(SEPARATOR_LINE)
         print("{0}@{1}".format(package_name, current_version))
-        print("================================================================")  
+        print(SEPARATOR_LINE)  
 
         
         script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -106,7 +106,7 @@ def main():
         print("Using following configuration files: {0}".format(config_paths))
 
         for config_path in config_paths:
-            print("================================================================")
+            print(SEPARATOR_LINE)
             config = read_config(config_path)
             
             # General Config
@@ -121,39 +121,15 @@ def main():
                     today = datetime.strptime(today_argument, "%Y-%m-%d")
             except:
                 # No override for todays date
-                print("No override for today")
+                print("No override for today")           
             
-            work_tracking_system = config["general"]["workTrackingSystem"]
             history_in_days = parse_history_argument(config, today)
+
+            work_item_service = WorkItemServiceFactory().create_service(config, history_in_days, today)
+            flow_metrics_service = FlowMetricsService(show_plots, charts_folder, today)     
+            monte_carlo_service = MonteCarloService(history_in_days, today.date(), False)
             
-            if work_tracking_system == "Jira":            
-                print("Using Jira")
-                jira_url = config["jira"]["url"]
-                username = config["jira"]["username"]
-                api_token = config["jira"]["apiToken"]
-                item_query = config["jira"]["itemQuery"]
-                estimation_field = config["jira"]["estimationField"]
-                
-                try:
-                    anonymize_label = config["jira"]["anonymizeLabel"]
-                except:
-                    anonymize_label = False
-                
-            
-                work_item_service = JiraWorkItemService(jira_url, username, api_token, estimation_field, history_in_days, anonymize_label, today)
-            elif work_tracking_system == "Azure DevOps":
-                print("Using Azure DevOps")
-                org_url = config["azureDevOps"]["organizationUrl"]
-                api_token = config["azureDevOps"]["apiToken"]
-                item_query = config["azureDevOps"]["itemQuery"]
-                estimation_field = config["azureDevOps"]["estimationField"]                
-                
-                work_item_service = AzureDevOpsWorkItemService(org_url, api_token, estimation_field, history_in_days, today)
-            else:
-                raise Exception("Work Tracking System {0} not supported. Supported values are 'Jira' and 'Azure DevOps'".format(work_tracking_system))
-            
-            work_items = work_item_service.get_items_via_query(item_query)            
-            flow_metrics_service = FlowMetricsService(show_plots, charts_folder, today)            
+            work_items = work_item_service.get_items()                   
             write_workitems_to_csv(config, work_items, charts_folder)           
             
             print("Creating Charts as per the configuration...")
@@ -166,7 +142,6 @@ def main():
             def run_forecasts():
                 forecasts = config["forecasts"]
                 
-                monte_carlo_service = MonteCarloService(history_in_days, today.date(), False)
                 
                 closed_items = [item for item in work_items if item.closed_date is not None]
                 
@@ -204,7 +179,7 @@ def main():
                         monte_carlo_service.how_many(target_date, throughput_history)
                     
                     if run_mc_when:
-                        remaining_items = work_item_service.get_items_via_query(remaining_items_query)
+                        remaining_items = work_item_service.get_items(remaining_items_query)
                         monte_carlo_service.when(len(remaining_items), throughput_history, target_date)
 
             def create_cycle_time_scatterplot():
@@ -294,18 +269,9 @@ def parse_history_argument(config, today):
         print("=== Warning ===")
         print("You are using the old parameter 'historyInDays' - please switch to the new name 'history'")
         print("Using default value of 90 instead")
-        print("=============")
+        print(SEPARATOR_LINE)
         
     return parse_history(history, today)
-
-def write_workitems_to_csv(config, work_items, charts_folder):
-    try:
-        csv_file_name = config["general"]["rawDataCSV"]
-    except:
-        csv_file_name = ""
-        
-    if csv_file_name:
-        csv_service.write_workitems_to_csv(csv_file_name, work_items, charts_folder)
 
 def parse_history(history, today):
     try:
@@ -318,5 +284,14 @@ def parse_history(history, today):
             
     return history
 
+def write_workitems_to_csv(config, work_items, charts_folder):
+    try:
+        csv_file_name = config["general"]["rawDataCSV"]
+    except:
+        csv_file_name = ""
+        
+    if csv_file_name:
+        CsvService.write_workitems_to_csv(csv_file_name, work_items, charts_folder)
+        
 if __name__ == "__main__":    
     main()

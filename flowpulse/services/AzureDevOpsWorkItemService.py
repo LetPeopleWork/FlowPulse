@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 
 class AzureDevOpsWorkItemService:    
     
-    def __init__(self, org_url, token, estimation_field, backlog_history, today):
+    def __init__(self, org_url, token, estimation_field, backlog_history, today, wiql_string):
         credentials = BasicAuthentication('', token)
         
         self.organization_url = org_url
@@ -19,21 +19,24 @@ class AzureDevOpsWorkItemService:
         
         self.connection = Connection(base_url=org_url, creds=credentials)
         self.wit_client = self.connection.clients.get_work_item_tracking_client()
+        self.wiql_string = wiql_string
         
         starting_date = (today - timedelta(backlog_history)).strftime("%m-%d-%Y")
         end_date = today.strftime("%m-%d-%Y")
         
         self.starting_date_statement = f'AND (([Microsoft.VSTS.Common.ActivatedDate] >= "{starting_date}" AND [Microsoft.VSTS.Common.ActivatedDate] <= "{end_date}") OR ([Microsoft.VSTS.Common.ResolvedDate] >= "{starting_date}" AND [Microsoft.VSTS.Common.ResolvedDate] <= "{end_date}") OR ([Microsoft.VSTS.Common.ClosedDate] >= "{starting_date}" AND [Microsoft.VSTS.Common.ClosedDate] <= "{end_date}"))'
     
-    def get_items_via_query(self, wiql_string):
+    def get_items(self, items_query = None):
         work_items = []        
+        if not items_query:
+            items_query = self.wiql_string
         
         wiql = Wiql(
                 query="""
                 select [System.Id], [System.Title], [Microsoft.VSTS.Common.ClosedDate], [Microsoft.VSTS.Common.ActivatedDate], [{0}]
                 from WorkItems
                 where {1} {2}"""
-            .format(self.estimation_field, wiql_string, self.starting_date_statement)
+            .format(self.estimation_field, items_query, self.starting_date_statement)
             )
         
         print("Executing following query: {0}".format(wiql.query))
