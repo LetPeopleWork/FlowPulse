@@ -1,6 +1,6 @@
 {
     "general": {
-        "workTrackingSystem": "Azure DevOps",
+        "datasource": "Azure DevOps",
         "chartsFolder": "Charts",
         "showPlots": false,
         "rawDataCSV": "workitems.csv",
@@ -49,7 +49,6 @@
     ],
     "cycleTimeScatterPlot": {
         "generate": true,
-        "history": "2024-09-01",
         "chartName": "CycleTime.png",
         "percentiles": [
             50,
@@ -71,7 +70,6 @@
     },
     "workItemAgeScatterPlot": {
         "generate": true,
-        "history": 30,
         "chartName": "WorkItemAge.png",
         "xAxisLines": [
             5,
@@ -84,25 +82,21 @@
     },
     "throughputRunChart": {
         "generate": true,
-        "history": 30,
         "unit": "days",
         "chartName": "Throughput.png"
     },
     "workInProcessRunChart": {
         "generate": true,
-        "history": 30,
         "chartName": "WorkInProcess.png"
     },
     "startedVsFinishedChart": {
         "generate": true,
-        "history": 30,
         "chartName": "StartedVsFinished.png",
         "startedColor": "orange",
         "closedColor": "green"
     },
     "estimationVsCycleTime": {
         "generate": true,
-        "history": 30,
         "chartName": "EstimationVsCycleTime.png",
         "estimationUnit": "Story Points"
     },
@@ -110,7 +104,6 @@
         "generate": true,
         "baselineStart": "2024-01-01",
         "baselineEnd": "2024-01-31",
-        "history": 30,
         "throughputChartName": "Throughput_PBC.png",
         "cycleTimeChartName": "CycleTime_PBC.png",
         "wipChartName": "WorkInProgress_PBC.png",

@@ -4,18 +4,18 @@ from .CsvService import CsvService
 
 class WorkItemServiceFactory:
     def create_service(self, config, history_in_days, today):
-        work_tracking_system = config["general"]["workTrackingSystem"].lower().replace(" ", "")
+        data_source = config["general"]["datasource"].lower().replace(" ", "")
         
-        print(f"Using the following source for the work items: {work_tracking_system}")
+        print(f"Using the following source for the work items: {data_source}")
         
-        if work_tracking_system == "jira":
+        if data_source == "jira":
             return self._create_jira_service(config, history_in_days, today)
-        elif work_tracking_system == "azuredevops":
+        elif data_source == "azuredevops":
             return self._create_azure_devops_service(config, history_in_days, today)
-        elif work_tracking_system == "csv":
+        elif data_source == "csv":
             return self._create_csv_service(config, history_in_days, today)
         else:
-            raise ValueError(f"Work Tracking System '{config['general']['workTrackingSystem']}' not supported. Supported values are 'Jira', 'Azure DevOps' and 'CSV'")
+            raise ValueError(f"Work Tracking System '{config['general']['datasource']}' not supported. Supported values are 'Jira', 'Azure DevOps' and 'CSV'")
 
     def _create_jira_service(self, config, history_in_days, today):
         jira_config = config["jira"]
