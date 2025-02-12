@@ -17,10 +17,11 @@ import os
 
 class FlowMetricsService:    
 
-    def __init__(self, show_plots, charts_folder, today = datetime.today()):
+    def __init__(self, show_plots, charts_folder, plot_labels = True, today = datetime.today()):
         self.show_plots = show_plots
         self.charts_folder = charts_folder
         self.today = today
+        self.plot_labels = plot_labels
 
         self.current_date = datetime.now().strftime('%d.%m.%Y')
 
@@ -52,13 +53,15 @@ class FlowMetricsService:
         plt.figure(figsize=(15, 9))
         plt.scatter(dates, cycle_times)
 
-        texts = []
-        for item in items:
-            text = plt.text(item.closed_date.date(), item.cycle_time, item.item_title, ha='center')
-            texts.append(text)
+        if self.plot_labels:
+            texts = []
+            if self.plot_labels:
+                for item in items:
+                    text = plt.text(item.closed_date.date(), item.cycle_time, item.item_title, ha='center')
+                    texts.append(text)
 
-        # Adjust text to avoid overlap
-        adjustText.adjust_text(texts, arrowprops=dict(arrowstyle="-", color='k', lw=0.5))
+            # Adjust text to avoid overlap
+            adjustText.adjust_text(texts, arrowprops=dict(arrowstyle="-", color='k', lw=0.5))
 
         plt.title("Cycle Time Scatterplot")
         plt.xlabel("Work Item Closed Date")
@@ -117,16 +120,17 @@ class FlowMetricsService:
         # Plot Work Item Age as triangles
         plt.scatter(dates, work_item_ages, label='Work Item Age (days)', alpha=0.7)
         
-        texts = []
-        for item in filtered_items:
-            work_item_age = item.work_item_age
-            
-            if work_item_age:
-                text = plt.text(item.started_date.date(), work_item_age, item.item_title, ha='center')
-                texts.append(text)
+        if self.plot_labels:
+            texts = []
+            for item in filtered_items:
+                work_item_age = item.work_item_age
+                
+                if work_item_age:
+                    text = plt.text(item.started_date.date(), work_item_age, item.item_title, ha='center')
+                    texts.append(text)
 
-        # Adjust text to avoid overlap
-        adjustText.adjust_text(texts, arrowprops=dict(arrowstyle="-", color='k', lw=0.5))
+            # Adjust text to avoid overlap
+            adjustText.adjust_text(texts, arrowprops=dict(arrowstyle="-", color='k', lw=0.5))
 
         plt.title("Work Item Age Scatterplot with Cycle Time Percentiles")
         plt.xlabel("Work Item Started Date")
@@ -351,13 +355,14 @@ class FlowMetricsService:
         plt.figure(figsize=(15, 9))
         plt.scatter(estimations, cycle_times)
         
-        texts = []
-        for item in items:
-            text = plt.text(item.estimation, item.cycle_time, item.item_title, ha='center')
-            texts.append(text)
+        if self.plot_labels:
+            texts = []
+            for item in items:
+                text = plt.text(item.estimation, item.cycle_time, item.item_title, ha='center')
+                texts.append(text)
 
-        # Adjust text to avoid overlap
-        adjustText.adjust_text(texts, arrowprops=dict(arrowstyle="-", color='k', lw=0.5))
+            # Adjust text to avoid overlap
+            adjustText.adjust_text(texts, arrowprops=dict(arrowstyle="-", color='k', lw=0.5))
         
         plt.title("Estimation vs. Cycle Time")
         plt.xlabel("Estimation ({0})".format(estimation_unit))
@@ -452,13 +457,14 @@ class FlowMetricsService:
         # Set y-axis label
         plt.ylabel(y_label)
         
-        texts = []
-        for index in range(len(item_texts)):
-            text = plt.text(x_values[index], y_values[index], item_texts[index], ha='center')
-            texts.append(text)
+        if self.plot_labels:
+            texts = []
+            for index in range(len(item_texts)):
+                text = plt.text(x_values[index], y_values[index], item_texts[index], ha='center')
+                texts.append(text)
 
-        # Adjust text to avoid overlap
-        adjustText.adjust_text(texts, arrowprops=dict(arrowstyle="-", color='k', lw=0.5))
+            # Adjust text to avoid overlap
+            adjustText.adjust_text(texts, arrowprops=dict(arrowstyle="-", color='k', lw=0.5))
 
         # Set chart title and legend
         plt.title(title)

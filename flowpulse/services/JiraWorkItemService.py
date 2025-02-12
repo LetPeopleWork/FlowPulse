@@ -1,18 +1,17 @@
 from ..WorkItem import WorkItem
 import requests
 from datetime import datetime, timedelta
-import pytz
 
 class JiraWorkItemService:    
     
     in_progress_status_categories = ["In Progress", "Done"]
     
-    def __init__(self, jira_url, username, api_token, estimation_field, backlog_history, anonymize_label, today, jql_string):
+    def __init__(self, jira_url, username, api_token, estimation_field, history_in_days, anonymize_label, today, jql_string):
         self.jira_url = jira_url
         self.username = username
         self.api_token = api_token
         self.estimation_field = estimation_field
-        self.backlog_history = backlog_history
+        self.backlog_history = history_in_days
         self.anonymize_label = anonymize_label
         self.jql_string = jql_string
         
@@ -25,15 +24,8 @@ class JiraWorkItemService:
             self.auth = None
             self.headers = {"Authorization": f"Bearer {api_token}"}
         
-        if today.tzinfo is None:
-            today = pytz.utc.localize(today)
-            
-        starting_date = (today - timedelta(backlog_history)).strftime("%Y-%m-%d")
-        
-        # Add one day to today to include today's work
-        end_date = (today + timedelta(days=1)).strftime("%Y-%m-%d")
-        
-        self.starting_date_statement = f'AND updated >= "{starting_date}" AND updated <= "{end_date}"'
+        self.today = today        
+        self.history_in_days = history_in_days
         
         self.status_category_map = self.get_status_categories()
 
@@ -79,7 +71,7 @@ class JiraWorkItemService:
         if not items_query:
             items_query = self.jql_string
         
-        jql = f'{items_query} {self.starting_date_statement}'
+        jql = f'{items_query}'
         print(f'Executing following query: {jql}')
         
         fields = 'id,key,summary,resolutiondate,created,status,' + self.estimation_field
@@ -87,7 +79,13 @@ class JiraWorkItemService:
         
         for issue in issues:
             work_item = self.convert_to_work_item(issue)
-            work_items.append(work_item)
+            
+            history_start = self.today - timedelta(days=self.history_in_days)
+            should_include_work_item = work_item.started_date and (work_item.started_date >= history_start and work_item.started_date <= self.today)
+            should_include_work_item = should_include_work_item or (work_item.closed_date and (work_item.closed_date >= history_start and work_item.closed_date <= self.today))
+            
+            if should_include_work_item:
+                work_items.append(work_item)
         
         return work_items
 

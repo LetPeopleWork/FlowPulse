@@ -124,9 +124,10 @@ def main():
                 print("No override for today")           
             
             history_in_days = parse_history_argument(config, today)
+            plot_labels = config["general"].get("plotLabels", True)
 
             work_item_service = WorkItemServiceFactory().create_service(config, history_in_days, today)
-            flow_metrics_service = FlowMetricsService(show_plots, charts_folder, today)     
+            flow_metrics_service = FlowMetricsService(show_plots, charts_folder, plot_labels, today)     
             monte_carlo_service = MonteCarloService(history_in_days, today.date(), False)
             
             work_items = work_item_service.get_items()                   

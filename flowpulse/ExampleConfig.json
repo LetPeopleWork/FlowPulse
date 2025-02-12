@@ -4,6 +4,7 @@
         "chartsFolder": "Charts",
         "showPlots": false,
         "rawDataCSV": "workitems.csv",
+        "plotLabels": true,
         "today": null
     },
     "azureDevOps": {
