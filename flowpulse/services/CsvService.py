@@ -31,32 +31,44 @@ class CsvService:
         print("Loading Items from CSV File: '{0}'. Started Date Column Name '{1}', Closed Date Column Name '{2}', Start Date Format '{3}', and Closed Date Format '{4}'".format(self.file_path, self.started_date_column_name, self.closed_date_column_name, self.start_date_format, self.closed_date_format))
         work_items = []
         
-        with open(self.file_path, 'r', encoding='utf-8-sig') as file:
-            csv_reader = csv.DictReader(file, delimiter=self.delimiter)
-            
-            for row in csv_reader:
-                closed_date = row[self.closed_date_column_name]
-                if closed_date:
-                    closed_date = datetime.strptime(closed_date, self.closed_date_format)      
-
-                started_date = row[self.started_date_column_name]
-                if started_date:    
-                    started_date = datetime.strptime(started_date, self.start_date_format)        
-
-                estimation = None
-                if self.estimation_column_name in row:
-                    raw_estimate = row[self.estimation_column_name]
-                    estimation = 0
-
-                    if raw_estimate:
-                        estimation = float(row[self.estimation_column_name])
+        encodings = ['utf-8-sig', 'utf-8', 'latin-1', 'cp1252']
+        for encoding in encodings:
+            try:
+                with open(self.file_path, 'r', encoding='utf-8-sig') as file:
+                    csv_reader = csv.DictReader(file, delimiter=self.delimiter)
                     
-                item_title = ""
-                if self.item_title_column in row:
-                    item_title = row[self.item_title_column]
-                       
-                work_items.append(WorkItem(item_title, item_title, started_date, closed_date, estimation))
-        
+                    for row in csv_reader:
+                        closed_date = row[self.closed_date_column_name]
+                        if closed_date:
+                            closed_date = datetime.strptime(closed_date, self.closed_date_format)      
+
+                        started_date = row[self.started_date_column_name]
+                        if started_date:    
+                            started_date = datetime.strptime(started_date, self.start_date_format)        
+
+                        estimation = None
+                        if self.estimation_column_name in row:
+                            raw_estimate = row[self.estimation_column_name]
+                            estimation = 0
+
+                            if raw_estimate:
+                                estimation = float(row[self.estimation_column_name])
+                            
+                        item_title = ""
+                        if self.item_title_column in row:
+                            item_title = row[self.item_title_column]
+                            
+                        work_items.append(WorkItem(item_title, item_title, started_date, closed_date, estimation))
+                        
+                    # If we successfully read the file, break the loop
+                    break
+            except UnicodeDecodeError:
+                # If this encoding didn't work, try the next one
+                continue
+            
+            if not work_items:
+                raise ValueError(f"Could not read the CSV file with any of the following encodings: {encodings}")
+
         if items_query:
             print("Items Query not supported for CSV - Loading all items that are NOT closed")
             work_items = [item for item in work_items if not item.closed_date]
