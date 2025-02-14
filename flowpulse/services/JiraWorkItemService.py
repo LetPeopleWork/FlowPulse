@@ -6,12 +6,11 @@ class JiraWorkItemService:
     
     in_progress_status_categories = ["In Progress", "Done"]
     
-    def __init__(self, jira_url, username, api_token, estimation_field, history_in_days, anonymize_label, today, jql_string):
+    def __init__(self, jira_url, username, api_token, estimation_field, anonymize_label, jql_string):
         self.jira_url = jira_url
         self.username = username
         self.api_token = api_token
         self.estimation_field = estimation_field
-        self.backlog_history = history_in_days
         self.anonymize_label = anonymize_label
         self.jql_string = jql_string
         
@@ -23,9 +22,6 @@ class JiraWorkItemService:
             # If no username, treat api_token as personal access token
             self.auth = None
             self.headers = {"Authorization": f"Bearer {api_token}"}
-        
-        self.today = today        
-        self.history_in_days = history_in_days
         
         self.status_category_map = self.get_status_categories()
 
@@ -80,12 +76,7 @@ class JiraWorkItemService:
         for issue in issues:
             work_item = self.convert_to_work_item(issue)
             
-            history_start = self.today - timedelta(days=self.history_in_days)
-            should_include_work_item = work_item.started_date and (work_item.started_date >= history_start and work_item.started_date <= self.today)
-            should_include_work_item = should_include_work_item or (work_item.closed_date and (work_item.closed_date >= history_start and work_item.closed_date <= self.today))
-            
-            if should_include_work_item:
-                work_items.append(work_item)
+            work_items.append(work_item)
         
         return work_items
 

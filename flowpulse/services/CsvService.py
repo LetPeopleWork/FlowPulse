@@ -55,12 +55,7 @@ class CsvService:
                 if self.item_title_column in row:
                     item_title = row[self.item_title_column]
                        
-                history_start = self.today - timedelta(days=self.history_in_days)
-                should_include_work_item = started_date and (started_date >= history_start and started_date <= self.today)
-                should_include_work_item = should_include_work_item or (closed_date and (closed_date >= history_start and closed_date <= self.today))
-                
-                if should_include_work_item:
-                    work_items.append(WorkItem(item_title, item_title, started_date, closed_date, estimation))
+                work_items.append(WorkItem(item_title, item_title, started_date, closed_date, estimation))
         
         if items_query:
             print("Items Query not supported for CSV - Loading all items that are NOT closed")

@@ -5,13 +5,13 @@
         "showPlots": false,
         "rawDataCSV": "workitems.csv",
         "plotLabels": true,
+        "history": 90,
         "today": null
     },
     "azureDevOps": {
         "organizationUrl": "https://dev.azure.com/YourOrg",
         "apiToken": "",
         "itemQuery": "([System.WorkItemType] = \"User Story\" or [System.WorkItemType] = \"Bug\") AND [System.TeamProject] == \"Your Project\" AND [System.AreaPath] UNDER \"Team Project\\Team Name\"",
-        "history": 90,
         "estimationField": "Microsoft.VSTS.Scheduling.StoryPoints"
     },
     "jira": {
@@ -19,7 +19,6 @@
         "username": "",
         "apiToken": "",
         "itemQuery": "issuetype in (\"Story\", \"Bug\") AND project = \"YourProject\" AND labels = \"YourTeamLabel\"",
-        "history": 90,
         "estimationField": "timetracking.originalEstimate",
         "anonymizeLabel": false
     },

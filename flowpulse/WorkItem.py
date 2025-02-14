@@ -20,6 +20,18 @@ class WorkItem:
         elif started_date and not self.closed_date:
             self.work_item_age = (datetime.today() - self.started_date).days + 1
 
+    def was_active_on(self, date):
+        if not self.started_date:
+            return False
+        
+        if self.started_date.date() > date:
+            return False
+        
+        if not self.closed_date:
+            return True
+        
+        return self.closed_date.date() >= date
+    
     def to_dict(self):
         result = {
             'work_item_age': self.work_item_age,

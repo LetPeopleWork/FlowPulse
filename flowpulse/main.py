@@ -15,6 +15,7 @@ from .services.CsvService import CsvService
 from .services.FlowMetricsService import FlowMetricsService
 from .services.MonteCarloService import MonteCarloService
 from .services.WorkItemServiceFactory import WorkItemServiceFactory
+from .services.WorkItemFilterService import WorkItemFilterService
 
 
 def print_logo():
@@ -127,7 +128,8 @@ def main():
             plot_labels = config["general"].get("plotLabels", True)
 
             work_item_service = WorkItemServiceFactory().create_service(config, history_in_days, today)
-            flow_metrics_service = FlowMetricsService(show_plots, charts_folder, plot_labels, today)     
+            work_item_filter_service = WorkItemFilterService(today, history_in_days)
+            flow_metrics_service = FlowMetricsService(show_plots, charts_folder, work_item_filter_service, history_in_days, plot_labels, today)     
             monte_carlo_service = MonteCarloService(history_in_days, today.date(), False)
             
             work_items = work_item_service.get_items()                   
@@ -141,10 +143,9 @@ def main():
                 exit()
                 
             def run_forecasts():
-                forecasts = config["forecasts"]
+                forecasts = config["forecasts"]               
                 
-                
-                closed_items = [item for item in work_items if item.closed_date is not None]
+                closed_items = work_item_filter_service.get_closed_items(work_items)
                 
                 if len(closed_items) == 0:
                     print("No closed items found with specified configuration - skipping forecasts")
@@ -184,7 +185,10 @@ def main():
                         monte_carlo_service.when(len(remaining_items), throughput_history, target_date)
 
             def create_cycle_time_scatterplot():
-                chart_config = config["cycleTimeScatterPlot"]
+                try:
+                    chart_config = config["cycleTimeScatterPlot"]
+                except KeyError:
+                    return
                 
                 trend_settings = None
                 if "trend_settings" in chart_config:
@@ -194,37 +198,55 @@ def main():
                     flow_metrics_service.plot_cycle_time_scatterplot(work_items, chart_config["percentiles"], chart_config["percentileColors"], chart_config["chartName"], trend_settings)
 
             def create_work_item_age_scatterplot():
-                chart_config = config["workItemAgeScatterPlot"]
+                try:
+                    chart_config = config["workItemAgeScatterPlot"]
+                except KeyError:
+                    return
 
                 if chart_config["generate"]:
                     flow_metrics_service.plot_work_item_age_scatterplot(work_items, chart_config["xAxisLines"], chart_config["xAxisLineColors"], chart_config["chartName"])
 
             def create_throughput_run_chart():
-                chart_config = config["throughputRunChart"]
+                try:
+                    chart_config = config["throughputRunChart"]
+                except KeyError:
+                    return
 
                 if chart_config["generate"]:
                     flow_metrics_service.plot_throughput_run_chart(work_items, chart_config["chartName"], chart_config["unit"])            
 
             def create_work_in_process_run_chart():
-                chart_config = config["workInProcessRunChart"]
+                try:
+                    chart_config = config["workInProcessRunChart"]
+                except KeyError:
+                    return
 
                 if chart_config["generate"]:
                     flow_metrics_service.plot_work_in_process_run_chart(work_items, chart_config["chartName"])
 
             def create_work_started_vs_finished_chart():
-                chart_config = config["startedVsFinishedChart"]
+                try:
+                    chart_config = config["startedVsFinishedChart"]
+                except KeyError:
+                    return
 
                 if chart_config["generate"]:
                     flow_metrics_service.plot_work_started_vs_finished_chart(work_items, chart_config["startedColor"], chart_config["closedColor"], chart_config["chartName"])
 
             def create_estimation_vs_cycle_time_chart():
-                chart_config = config["estimationVsCycleTime"]
+                try:
+                    chart_config = config["estimationVsCycleTime"]
+                except KeyError:
+                    return
 
                 if chart_config["generate"]:
                     flow_metrics_service.plot_estimation_vs_cycle_time_scatterplot(work_items, chart_config["chartName"], chart_config["estimationUnit"])
 
             def create_process_behaviour_charts():
-                chart_config = config["processBehaviourCharts"]
+                try:
+                    chart_config = config["processBehaviourCharts"]
+                except KeyError:
+                    return
 
                 if chart_config["generate"]:
                     baseline_start = datetime.strptime(chart_config["baselineStart"], "%Y-%m-%d")
