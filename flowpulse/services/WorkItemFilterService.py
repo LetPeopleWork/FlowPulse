@@ -13,8 +13,7 @@ class WorkItemFilterService:
 
     def get_open_items(self, work_items):
         return [item for item in work_items 
-                if item.started_date and item.started_date <= self.today
-                and (not item.closed_date or item.closed_date > self.today)]
+                if item.was_active_on(self.today.date())]
 
     def get_in_progress_items(self, work_items):
         start_date = self.today - timedelta(days=self.history_days)        

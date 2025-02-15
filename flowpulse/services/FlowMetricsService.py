@@ -114,7 +114,7 @@ class FlowMetricsService:
         # Get only items that were closed within the specified history
         filtered_items = self.work_item_filter_service.get_open_items(items)
         
-        work_item_ages = [item.work_item_age for item in filtered_items]
+        work_item_ages = [item.get_work_item_age(self.today.date()) for item in filtered_items]
         if not work_item_ages:
             print("No work items with age for plotting.")
             return
@@ -130,7 +130,7 @@ class FlowMetricsService:
         if self.plot_labels:
             texts = []
             for item in filtered_items:
-                work_item_age = item.work_item_age
+                work_item_age = item.get_work_item_age(self.today.date())
                 
                 if work_item_age:
                     text = plt.text(item.started_date.date(), work_item_age, item.item_title, ha='center')
@@ -443,6 +443,8 @@ class FlowMetricsService:
         # Plot data
         plt.figure(figsize=(15, 9))
         plt.plot(x_values, y_values, marker='o', linestyle='-', color='b')
+        
+        plt.gca().set_ylim(bottom=0)  # Set y-axis minimum to 0
 
         # Plot baseline average, unpl, and lnpl as horizontal lines
         plt.axhline(y=average, color='r', linestyle='--', label='Average')
@@ -504,9 +506,10 @@ class FlowMetricsService:
             # Iterate through each item
             for item in work_items:
                 # Check if the item was started but not closed on the current day
-                if item.started_date and item.started_date <= current_date and (not item.closed_date or item.closed_date > current_date):
+                if item.was_active_on(current_date.date()):
                     # Calculate the delta between the current date and the item's started date
-                    delta_days = (current_date - item.started_date).days
+                    delta_days = item.get_work_item_age(current_date.date())
+                    
                     # Increment total age by the delta
                     total_age_per_day[day_count] += delta_days
 
@@ -527,10 +530,9 @@ class FlowMetricsService:
             
             # Iterate through each item
             for item in work_items:
-                # Check if the item was started but not closed on the current day
-                if item.started_date and item.started_date <= current_date and (not item.closed_date or item.closed_date > current_date):
-                    count_per_day[day_count] += 1  # Increment count if the condition is met
-            
+                if item.was_active_on(current_date.date()):
+                    count_per_day[day_count] += 1
+                    
             # Move to the next day
             current_date += timedelta(days=1)
             day_count += 1  # Increment day count
