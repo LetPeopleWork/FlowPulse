@@ -1,0 +1,36 @@
+title: FlowPulse Documentation
+description: Documentation for FlowPulse.
+theme: just-the-docs
+
+url: https://docs.flowpulse.letpeople.work
+
+logo: "/assets/Logo.png"
+color_scheme: dark
+
+search_enabled: true
+nav_enabled: true
+heading_anchors: true
+aux_links_new_tab: true
+
+enable_copy_code_button: true
+
+mermaid:
+  version: "11.4.1"
+
+livereload: true
+force_polling: true
+
+callouts:
+  note:
+    color: yellow
+  definition:
+    title: Definition
+    color: blue
+  important:
+    color: red
+  recommendation:
+    color: green
+
+aux_links:
+  Let People Work: https://letpeople.work
+  GitHub: https://github.com/letpeoplework/flowpulse
