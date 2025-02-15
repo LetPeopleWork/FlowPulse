@@ -3,7 +3,7 @@ from azure.devops.connection import Connection
 from msrest.authentication import BasicAuthentication
 from azure.devops.v7_1.work_item_tracking.models import Wiql
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 class AzureDevOpsWorkItemService:    
     

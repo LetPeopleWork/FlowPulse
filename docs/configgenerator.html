@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration Editor</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container my-5">
+        <div class="row mb-4">
+            <div class="col">
+                <h1>Configuration Editor</h1>
+                <div class="mb-3">
+                    <label for="configFile" class="form-label">Upload existing config:</label>
+                    <input type="file" class="form-control" id="configFile" accept=".json">
+                </div>
+            </div>
+        </div>
+
+        <form id="configForm">
+            <!-- General Settings -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>General Settings</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Data Source</label>
+                                <select class="form-select" name="general.datasource">
+                                    <option value="Azure DevOps">Azure DevOps</option>
+                                    <option value="Jira">Jira</option>
+                                    <option value="CSV">CSV</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Charts Folder</label>
+                                <input type="text" class="form-control" name="general.chartsFolder">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Raw Data CSV</label>
+                                <input type="text" class="form-control" name="general.rawDataCSV">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">History (days)</label>
+                                <input type="number" class="form-control" name="general.history">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="general.showPlots" id="showPlots">
+                        <label class="form-check-label" for="showPlots">Show Plots</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="general.plotLabels" id="plotLabels">
+                        <label class="form-check-label" for="plotLabels">Plot Labels</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Azure DevOps Settings -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Azure DevOps Settings</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Organization URL</label>
+                        <input type="url" class="form-control" name="azureDevOps.organizationUrl">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">API Token</label>
+                        <input type="password" class="form-control" name="azureDevOps.apiToken">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Item Query</label>
+                        <textarea class="form-control" name="azureDevOps.itemQuery" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Estimation Field</label>
+                        <input type="text" class="form-control" name="azureDevOps.estimationField">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Forecasts -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4>Forecasts</h4>
+                    <button type="button" class="btn btn-primary btn-sm" id="addForecast">Add Forecast</button>
+                </div>
+                <div class="card-body" id="forecastsContainer">
+                    <!-- Forecasts will be added here dynamically -->
+                </div>
+            </div>
+
+            <!-- Charts Configuration -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Charts Configuration</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h5>Cycle Time Scatter Plot</h5>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="cycleTimeScatterPlot.generate" id="generateCycleTime">
+                            <label class="form-check-label" for="generateCycleTime">Generate Chart</label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Chart Name</label>
+                            <input type="text" class="form-control" name="cycleTimeScatterPlot.chartName">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <button type="submit" class="btn btn-primary">Download Configuration</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
+
+    <script>
+        // Forecast template
+        const forecastTemplate = `
+            <div class="forecast-item border-bottom pb-3 mb-3">
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-control" name="forecasts[].name">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Remaining Backlog Query</label>
+                    <textarea class="form-control" name="forecasts[].remainingBacklogQuery" rows="2"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Target Date</label>
+                    <input type="text" class="form-control datepicker" name="forecasts[].targetDate">
+                </div>
+                <button type="button" class="btn btn-danger btn-sm remove-forecast">Remove</button>
+            </div>
+        `;
+
+        // Initialize datepicker for dynamic elements
+        function initializeDatepicker(element) {
+            $(element).datepicker({
+                format: 'yyyy-mm-dd',
+                autoclose: true
+            });
+        }
+
+        // Add forecast
+        $('#addForecast').click(function() {
+            const forecastItem = $(forecastTemplate);
+            $('#forecastsContainer').append(forecastItem);
+            initializeDatepicker(forecastItem.find('.datepicker'));
+        });
+
+        // Remove forecast
+        $(document).on('click', '.remove-forecast', function() {
+            $(this).closest('.forecast-item').remove();
+        });
+
+        // File upload handler
+        $('#configFile').change(function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const config = JSON.parse(e.target.result);
+                        populateForm(config);
+                    } catch (error) {
+                        alert('Error parsing JSON file');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        // Populate form with config data
+        function populateForm(config) {
+            // Populate general settings
+            Object.entries(config.general).forEach(([key, value]) => {
+                const element = document.querySelector(`[name="general.${key}"]`);
+                if (element) {
+                    if (element.type === 'checkbox') {
+                        element.checked = value;
+                    } else {
+                        element.value = value;
+                    }
+                }
+            });
+
+            // Populate Azure DevOps settings
+            Object.entries(config.azureDevOps).forEach(([key, value]) => {
+                const element = document.querySelector(`[name="azureDevOps.${key}"]`);
+                if (element) {
+                    element.value = value;
+                }
+            });
+
+            // Populate forecasts
+            $('#forecastsContainer').empty();
+            config.forecasts.forEach(forecast => {
+                const forecastItem = $(forecastTemplate);
+                forecastItem.find('[name="forecasts[].name"]').val(forecast.name);
+                forecastItem.find('[name="forecasts[].remainingBacklogQuery"]').val(forecast.remainingBacklogQuery);
+                forecastItem.find('[name="forecasts[].targetDate"]').val(forecast.targetDate);
+                $('#forecastsContainer').append(forecastItem);
+                initializeDatepicker(forecastItem.find('.datepicker'));
+            });
+        }
+
+        // Form submit handler
+        $('#configForm').submit(function(e) {
+            e.preventDefault();
+            
+            // Collect form data
+            const formData = {
+                general: {
+                    datasource: $('[name="general.datasource"]').val(),
+                    chartsFolder: $('[name="general.chartsFolder"]').val(),
+                    showPlots: $('[name="general.showPlots"]').prop('checked'),
+                    rawDataCSV: $('[name="general.rawDataCSV"]').val(),
+                    plotLabels: $('[name="general.plotLabels"]').prop('checked'),
+                    history: parseInt($('[name="general.history"]').val()),
+                    today: null
+                },
+                azureDevOps: {
+                    organizationUrl: $('[name="azureDevOps.organizationUrl"]').val(),
+                    apiToken: $('[name="azureDevOps.apiToken"]').val(),
+                    itemQuery: $('[name="azureDevOps.itemQuery"]').val(),
+                    estimationField: $('[name="azureDevOps.estimationField"]').val()
+                },
+                forecasts: []
+            };
+
+            // Collect forecasts
+            $('.forecast-item').each(function() {
+                const forecast = {
+                    name: $(this).find('[name="forecasts[].name"]').val(),
+                    remainingBacklogQuery: $(this).find('[name="forecasts[].remainingBacklogQuery"]').val(),
+                    targetDate: $(this).find('[name="forecasts[].targetDate"]').val()
+                };
+                formData.forecasts.push(forecast);
+            });
+
+            // Generate and download JSON file
+            const jsonString = JSON.stringify(formData, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'config.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+    </script>
+</body>
+</html>

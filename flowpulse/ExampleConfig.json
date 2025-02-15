@@ -1,6 +1,6 @@
 {
     "general": {
-        "datasource": "Azure DevOps",
+        "datasource": "CSV",
         "chartsFolder": "Charts",
         "showPlots": false,
         "rawDataCSV": "workitems.csv",
@@ -37,10 +37,6 @@
             "name": "Release 24.10",
             "remainingBacklogQuery": "issuetype in (\"Story\", \"Bug\") AND project = \"YourProject\" AND status not in (\"Done\") AND fixVersion = \"Release 24.10\"",
             "targetDate": "2024-10-31"
-        },
-        {
-            "name": "Sprint Goal",
-            "remainingBacklogQuery": "([System.WorkItemType] = \"User Story\" or [System.WorkItemType] = \"Bug\") AND [System.TeamProject] == \"Your Project\" AND ([System.State] <> \"Closed\" AND [System.State] <> \"Removed\") AND [System.AreaPath] UNDER \"Team Project\\Team Name\" AND [System.Tags] CONTAINS \"Sprint Goal\""
         },
         {
             "name": "Sprint Forecast",
