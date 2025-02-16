@@ -66,6 +66,7 @@ jobs:
     name: Publish to TestPyPi
     needs: test
     runs-on: ubuntu-latest
+    permissions: write-all
 
     environment:
       name: Release
@@ -121,7 +122,8 @@ jobs:
     name: Publish to PyPi (Manual Approval)
     runs-on: ubuntu-latest
     needs: publish_to_testpypi
-    if: github.ref == 'refs/heads/main'       
+    if: github.ref == 'refs/heads/main' 
+    permissions: write-all      
 
     environment:
       name: Release
