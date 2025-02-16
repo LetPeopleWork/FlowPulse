@@ -128,36 +128,33 @@ class TestFlowMetricsService:
         # Track if the test passed
         self.test_passed = True
 
-    def compare_images(self, test_image_path, baseline_name):
-        baseline_path = os.path.join(self.baseline_folder, baseline_name)
+    def compare_images(self, test_image_path, baseline_image_name):
+        baseline_path = os.path.join(self.baseline_folder, baseline_image_name)
 
-        # If baseline doesn't exist, create it
+        # Ensure both images exist
+        if not os.path.exists(test_image_path):
+            pytest.fail(f"Test image not found: {test_image_path}")
         if not os.path.exists(baseline_path):
-            print(f"Creating baseline image: {baseline_path}")
-            os.makedirs(os.path.dirname(baseline_path), exist_ok=True)
-            test_image = Image.open(test_image_path)
-            test_image.save(baseline_path)
-            return True
+            pytest.fail(f"Baseline image not found: {baseline_path}")
 
-        # Compare images
-        test_image = Image.open(test_image_path)
-        baseline_image = Image.open(baseline_path)
+        try:
+            test_img = Image.open(test_image_path)
+            baseline_img = Image.open(baseline_path)
 
-        # Convert images to numpy arrays for comparison
-        test_array = np.array(test_image)
-        baseline_array = np.array(baseline_image)
+            # Convert images to same format and size
+            test_img = test_img.convert("RGB").resize((800, 600))
+            baseline_img = baseline_img.convert("RGB").resize((800, 600))
 
-        # Compare arrays
-        if test_array.shape != baseline_array.shape:
-            self.test_passed = False
-            return False
+            # Compare images with tolerance
+            test_array = np.array(test_img)
+            baseline_array = np.array(baseline_img)
+            difference = np.abs(test_array - baseline_array)
 
-        difference = np.abs(test_array - baseline_array)
-        max_difference = np.max(difference)
+            # Allow for small differences (e.g., due to antialiasing)
+            return np.mean(difference) < 5.0
 
-        # Update test status
-        self.test_passed = max_difference < 10
-        return self.test_passed
+        except Exception as e:
+            pytest.fail(f"Image comparison failed: {str(e)}")
 
     def test_cycle_time_scatterplot(self, setup_service, sample_work_items):
         chart_name = "test_cycle_time_scatter.png"

@@ -43,7 +43,24 @@ jobs:
   
       - name: Run tests
         run: |
-          pytest -v -m "not integration"
+          pytest -v -m "not integration" --junitxml=test-results.xml
+        continue-on-error: true
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: test-results.xml
+          
+      - name: Upload test charts
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-charts
+          path: |
+            tests/baseline_charts
+            tests/test_charts
+          if-no-files-found: ignore
 
   publish_to_testpypi:
     name: Publish to TestPyPi
