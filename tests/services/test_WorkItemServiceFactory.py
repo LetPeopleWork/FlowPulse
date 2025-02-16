@@ -35,7 +35,7 @@ class TestWorkItemServiceFactory:
             },
             {
                 "name": "csv",
-                "fileName": "tests/data.csv",
+                "fileName": "tests/testdata.csv",
                 "delimeter": ",",
                 "startedDateColumn": "Started",
                 "closedDateColumn": "Closed",
