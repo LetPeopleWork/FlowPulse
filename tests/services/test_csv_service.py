@@ -67,10 +67,10 @@ def test_write_workitems_to_csv(csv_service, tmp_path):
 
     # Write them to a new CSV
     output_file = "output.csv"
-    CsvService.write_workitems_to_csv(output_file, items, str(tmp_path))
+    output_path = os.path.join(tmp_path, output_file)
+    CsvService.write_workitems_to_csv(output_path, items)
 
     # Verify the file exists
-    output_path = os.path.join(tmp_path, output_file)
     assert os.path.exists(output_path)
 
     # Create a new service to read the written file

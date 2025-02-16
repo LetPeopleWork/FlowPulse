@@ -1,0 +1,88 @@
+{
+    "general": {
+        "datasource": "CSV",
+        "chartsFolder": "Charts",
+        "showPlots": false,
+        "rawDataCSV": "workitems.csv",
+        "plotLabels": true,
+        "history": 30,
+        "today": "2024-01-01"
+    },
+    "dataSources": [
+        {
+            "name": "csv",
+            "fileName": "IntegrationTestData.csv",
+            "delimeter": ",",
+            "startedDateColumn": "started_date",
+            "closedDateColumn": "closed_date",
+            "startDateFormat": "%Y-%m-%d",
+            "closedDateFormat": "",
+            "estimationColumn": "estimation",
+            "itemTitleColumn": "title"
+        }
+    ],
+    "charts": [
+        {
+            "type": "cycleTimeScatterPlot",
+            "chartName": "CycleTime.png",
+            "percentiles": [
+                50,
+                70,
+                85,
+                95
+            ],
+            "percentileColors": [
+                "red",
+                "orange",
+                "lightgreen",
+                "darkgreen"
+            ],
+            "trend_settings": [
+                70,
+                10,
+                "purple"
+            ]
+        },
+        {
+            "type": "workItemAgeScatterPlot",
+            "chartName": "WorkItemAge.png",
+            "xAxisLines": [
+                5,
+                10
+            ],
+            "xAxisLineColors": [
+                "orange",
+                "red"
+            ]
+        },
+        {
+            "type": "throughputRunChart",
+            "unit": "days",
+            "chartName": "Throughput.png"
+        },
+        {
+            "type": "workInProcessRunChart",
+            "chartName": "WorkInProcess.png"
+        },
+        {
+            "type": "startedVsFinishedChart",
+            "chartName": "StartedVsFinished.png",
+            "startedColor": "orange",
+            "closedColor": "green"
+        },
+        {
+            "type": "estimationVsCycleTime",
+            "chartName": "EstimationVsCycleTime.png",
+            "estimationUnit": "Story Points"
+        },
+        {
+            "type": "processBehaviourCharts",
+            "baselineStart": "2023-12-02",
+            "baselineEnd": "2023-12-22",
+            "throughputChartName": "Throughput_PBC.png",
+            "cycleTimeChartName": "CycleTime_PBC.png",
+            "wipChartName": "WorkInProgress_PBC.png",
+            "itemAgeChartName": "WorkItemAge_PBC.png"
+        }
+    ]
+}

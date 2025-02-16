@@ -228,8 +228,8 @@ class TestFlowMetricsService:
         assert self.compare_images(chart_path, chart_name)
 
     def test_process_behaviour_charts(self, setup_service, sample_work_items):
-        baseline_start = self.today - timedelta(days=60)
-        baseline_end = self.today - timedelta(days=30)
+        baseline_start = self.today - timedelta(days=30)
+        baseline_end = self.today - timedelta(days=10)
 
         charts = [
             ("test_pbc_total_age.png", self.service.plot_total_age_process_behaviour_chart),

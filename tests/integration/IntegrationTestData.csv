@@ -1,0 +1,13 @@
+id,title,estimation,started_date,closed_date,work_item_age,cycle_time,state_changed_date
+PROJ-101,Update user authentication,3,2023-12-20,2023-12-22,,3,2023-12-20
+PROJ-102,Fix critical security vulnerability,5,2023-12-15,2023-12-16,,2,2023-12-15
+PROJ-103,Implement new dashboard features,8,2023-12-10,2023-12-25,,16,2023-12-10
+PROJ-104,Database optimization,5,2023-12-18,2023-12-28,,11,2023-12-18
+PROJ-105,API documentation update,2,2023-12-26,2023-12-27,,2,2023-12-26
+PROJ-106,Mobile responsiveness fixes,3,2023-12-05,2023-12-15,,11,2023-12-05
+PROJ-107,Cloud migration - Phase 1,13,2023-12-10,,435,,2023-12-10
+PROJ-108,Performance monitoring setup,5,2023-12-28,,417,,2023-12-28
+PROJ-109,User feedback integration,3,2023-12-22,,423,,2023-12-22
+PROJ-110,Future feature planning,8,,,,,
+PROJ-111,Bug fix: login page,1,2023-12-29,2023-12-30,,2,2023-12-29
+PROJ-112,Email template redesign,5,2023-12-12,2023-12-19,,8,2023-12-12

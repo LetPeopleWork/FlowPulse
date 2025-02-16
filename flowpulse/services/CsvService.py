@@ -107,9 +107,8 @@ class CsvService:
         return work_items
 
     @staticmethod
-    def write_workitems_to_csv(csv_file_name, work_items, charts_folder):
-        if csv_file_name:
-            csv_file_path = os.path.join(charts_folder, csv_file_name)
+    def write_workitems_to_csv(csv_file_path, work_items):
+        if csv_file_path:
             with open(csv_file_path, mode="w", newline="") as csv_file:
                 writer = csv.writer(csv_file)
 

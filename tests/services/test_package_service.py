@@ -14,6 +14,7 @@ def test_init(package_service):
 
 
 @patch("flowpulse.services.PackageService.version")
+@pytest.mark.integration
 def test_print_current_version(mock_version, capsys):
     mock_version.return_value = "1.0.0"
     service = PackageService()
@@ -26,6 +27,7 @@ def test_print_current_version(mock_version, capsys):
 
 @patch("requests.get")
 @patch("flowpulse.services.PackageService.version")
+@pytest.mark.integration
 def test_check_for_updates_new_version_available(mock_version, mock_requests, capsys):
     mock_version.return_value = "1.0.0"
     mock_response = MagicMock()
@@ -42,6 +44,7 @@ def test_check_for_updates_new_version_available(mock_version, mock_requests, ca
 
 @patch("requests.get")
 @patch("flowpulse.services.PackageService.version")
+@pytest.mark.integration
 def test_check_for_updates_same_version(mock_version, mock_requests, capsys):
     mock_version.return_value = "1.0.0"
     mock_response = MagicMock()
@@ -56,6 +59,7 @@ def test_check_for_updates_same_version(mock_version, mock_requests, capsys):
 
 
 @patch("requests.get")
+@pytest.mark.integration
 def test_check_for_updates_error_handling(mock_requests, capsys):
     mock_requests.side_effect = Exception("Connection error")
 

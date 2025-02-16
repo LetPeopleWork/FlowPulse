@@ -43,7 +43,7 @@ jobs:
   
       - name: Run tests
         run: |
-          pytest
+          pytest -v -m "not integration"
 
   publish_to_testpypi:
     name: Publish to TestPyPi
@@ -70,6 +70,14 @@ jobs:
       - name: Build and publish to TestPyPi
         run: |
           pwsh ./upload_test_pypi.ps1
+
+      - name: Install published version from TestPyPi
+        run: |
+          pwsh ./install_latest_test_package.ps1
+
+      - name: Run Integration Tests
+        run: |
+          pytest -v -m "integration"
 
   publish_to_pypi:
     name: Publish to PyPi (Manual Approval)
