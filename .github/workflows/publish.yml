@@ -99,7 +99,7 @@ jobs:
 
       - name: Run Integration Tests
         run: |
-          pytest -v -m "not integration" --junitxml=test-results.xml
+          pytest -v -m "integration" --junitxml=test-results.xml
   
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
@@ -155,7 +155,7 @@ jobs:
 
       - name: Run Integration Tests
         run: |
-          pytest -v -m "not integration" --junitxml=test-results.xml
+          pytest -v -m "integration" --junitxml=test-results.xml
   
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
