@@ -28,7 +28,7 @@ class TestWorkItemServiceFactory:
             },
             {
                 "name": "azuredevops",
-                "organizationUrl": "https://dev.azure.com/letpeoplework",
+                "organizationUrl": "https://dev.azure.com/huserben",
                 "apiToken": azure_token,
                 "estimationField": "story_points",
                 "itemQuery": "SELECT * FROM WorkItems",
