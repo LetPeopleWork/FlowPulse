@@ -18,7 +18,7 @@
             "startDateFormat": "%Y-%m-%d",
             "closedDateFormat": "",
             "estimationColumn": "estimation",
-            "itemTitleColumn": "title"
+            "itemTitleColumn": "id"
         }
     ],
     "charts": [

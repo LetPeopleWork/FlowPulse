@@ -1,12 +1,12 @@
 import os
 import pytest
 from datetime import datetime, timedelta
-import numpy as np
-from PIL import Image
+from tests.utils.test_utils import compare_images
 
 from flowpulse.services.WorkItemFilterService import WorkItemFilterService
 from flowpulse.services.FlowMetricsService import FlowMetricsService
 from flowpulse.WorkItem import WorkItem
+import shutil
 
 
 class TestFlowMetricsService:
@@ -135,26 +135,11 @@ class TestFlowMetricsService:
         if not os.path.exists(test_image_path):
             pytest.fail(f"Test image not found: {test_image_path}")
         if not os.path.exists(baseline_path):
+            # Copy the test image to create a new baseline
+            shutil.copy2(test_image_path, baseline_path)
             pytest.fail(f"Baseline image not found: {baseline_path}")
 
-        try:
-            test_img = Image.open(test_image_path)
-            baseline_img = Image.open(baseline_path)
-
-            # Convert images to same format and size
-            test_img = test_img.convert("RGB").resize((800, 600))
-            baseline_img = baseline_img.convert("RGB").resize((800, 600))
-
-            # Compare images with tolerance
-            test_array = np.array(test_img)
-            baseline_array = np.array(baseline_img)
-            difference = np.abs(test_array - baseline_array)
-
-            # Allow for small differences (e.g., due to antialiasing)
-            return np.mean(difference) < 5.0
-
-        except Exception as e:
-            pytest.fail(f"Image comparison failed: {str(e)}")
+        return compare_images(test_image_path, baseline_path)
 
     def test_cycle_time_scatterplot(self, setup_service, sample_work_items):
         chart_name = "test_cycle_time_scatter.png"
@@ -207,7 +192,7 @@ class TestFlowMetricsService:
 
         self.service.plot_work_started_vs_finished_chart(
             work_items=sample_work_items,
-            started_color="blue",
+            started_color="orange",
             closed_color="green",
             chart_name=chart_name,
         )
