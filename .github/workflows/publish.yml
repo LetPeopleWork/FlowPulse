@@ -45,7 +45,6 @@ jobs:
       - name: Run tests
         run: |
           pytest -v -m "not integration" --junitxml=test-results.xml
-        continue-on-error: true
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
@@ -91,11 +90,46 @@ jobs:
 
       - name: Install published version from TestPyPi
         run: |
-          pwsh ./install_latest_test_package.ps1
+            for i in {1..10}; do
+            pwsh ./install_latest_test_package.ps1
+            EXPECTED_VERSION=$(grep -Po "(?<=version=')[^']*" setup.py)
+            INSTALLED_VERSION=$(pip show flowpulse | grep Version | cut -d' ' -f2)
+            if [ "$INSTALLED_VERSION" = "$EXPECTED_VERSION" ]; then
+              echo "Successfully installed version $INSTALLED_VERSION"
+              break
+            fi
+            if [ $i -eq 10 ]; then
+              echo "Failed to install correct version after 30 seconds"
+              exit 1
+            fi
+            echo "Waiting for version $EXPECTED_VERSION (got $INSTALLED_VERSION)..."
+            sleep 3
+            done
+
+      - name: Run flowpulse
+        run: |
+          flowpulse
+        working-directory: tests/integration
 
       - name: Run Integration Tests
         run: |
-          pytest -v -m "integration"
+          pytest -v -m "not integration" --junitxml=test-results.xml
+  
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: test-results.xml
+          
+      - name: Upload test charts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-charts
+          path: |
+            tests/baseline_charts
+            tests/test_charts
+          if-no-files-found: ignore
 
   publish_to_pypi:
     name: Publish to PyPi (Manual Approval)

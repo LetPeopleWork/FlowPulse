@@ -1,7 +1,7 @@
 {
     "general": {
         "datasource": "CSV",
-        "chartsFolder": "Charts",
+        "chartsFolder": "../test_charts",
         "showPlots": false,
         "rawDataCSV": "workitems.csv",
         "plotLabels": true,
@@ -24,7 +24,7 @@
     "charts": [
         {
             "type": "cycleTimeScatterPlot",
-            "chartName": "CycleTime.png",
+            "chartName": "test_cycle_time_scatter.png",
             "percentiles": [
                 50,
                 70,
@@ -45,7 +45,7 @@
         },
         {
             "type": "workItemAgeScatterPlot",
-            "chartName": "WorkItemAge.png",
+            "chartName": "test_work_item_age.png",
             "xAxisLines": [
                 5,
                 10
@@ -58,31 +58,31 @@
         {
             "type": "throughputRunChart",
             "unit": "days",
-            "chartName": "Throughput.png"
+            "chartName": "test_throughput.png"
         },
         {
             "type": "workInProcessRunChart",
-            "chartName": "WorkInProcess.png"
+            "chartName": "test_wip.png"
         },
         {
             "type": "startedVsFinishedChart",
-            "chartName": "StartedVsFinished.png",
+            "chartName": "test_started_vs_finished.png",
             "startedColor": "orange",
             "closedColor": "green"
         },
         {
             "type": "estimationVsCycleTime",
-            "chartName": "EstimationVsCycleTime.png",
+            "chartName": "test_estimation_vs_cycle_time.png",
             "estimationUnit": "Story Points"
         },
         {
             "type": "processBehaviourCharts",
             "baselineStart": "2023-12-02",
             "baselineEnd": "2023-12-22",
-            "throughputChartName": "Throughput_PBC.png",
-            "cycleTimeChartName": "CycleTime_PBC.png",
-            "wipChartName": "WorkInProgress_PBC.png",
-            "itemAgeChartName": "WorkItemAge_PBC.png"
+            "throughputChartName": "test_pbc_throughput.png",
+            "cycleTimeChartName": "test_pbc_cycle_time.png",
+            "wipChartName": "test_pbc_wip.png",
+            "itemAgeChartName": "test_pbc_total_age.png"
         }
     ]
 }
