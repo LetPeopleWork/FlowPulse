@@ -1,1 +1,1 @@
-# Empty file to mark directory as Python package
+# Empty file to make the directory a Python package
