@@ -1,0 +1,10 @@
+{
+    "black-formatter.args": [
+        "--target-version",
+        "py310"
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true
+    }
+}

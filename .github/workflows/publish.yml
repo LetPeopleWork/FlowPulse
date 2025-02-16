@@ -14,7 +14,7 @@ env:
 
 jobs:
   test:
-    name: Run Unit Tests
+    name: Lint and Test
     runs-on: ubuntu-latest
 
     steps:
@@ -31,7 +31,13 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
           python -m pip install pytest
+          - name: Run linting
 
+      - name: Run linting
+        run: |
+          flake8 .
+          black . --check --target-version py310
+  
       - name: Run tests
         run: |
           pytest
@@ -40,6 +46,9 @@ jobs:
     name: Publish to TestPyPi
     needs: test
     runs-on: ubuntu-latest
+
+    environment:
+      name: Release
 
     steps:
       - name: Checkout code

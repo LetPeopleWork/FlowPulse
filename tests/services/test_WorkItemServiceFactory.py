@@ -6,14 +6,15 @@ from flowpulse.services.JiraWorkItemService import JiraWorkItemService
 from flowpulse.services.AzureDevOpsWorkItemService import AzureDevOpsWorkItemService
 from flowpulse.services.CsvService import CsvService
 
+
 class TestWorkItemServiceFactory:
     @pytest.fixture
     def factory(self):
         return WorkItemServiceFactory()
-    
+
     @pytest.fixture
     def mock_data_sources(self):
-        azure_token = os.environ.get('AzureDevOpsLighthouseIntegrationTestToken', 'default_token')
+        azure_token = os.environ.get("AzureDevOpsLighthouseIntegrationTestToken", "default_token")
 
         return [
             {
@@ -23,14 +24,14 @@ class TestWorkItemServiceFactory:
                 "apiToken": "token",
                 "estimationField": "story_points",
                 "itemQuery": "project = TEST",
-                "anonymizeLabel": False
+                "anonymizeLabel": False,
             },
             {
                 "name": "azuredevops",
                 "organizationUrl": "https://dev.azure.com/letpeoplework",
                 "apiToken": azure_token,
                 "estimationField": "story_points",
-                "itemQuery": "SELECT * FROM WorkItems"
+                "itemQuery": "SELECT * FROM WorkItems",
             },
             {
                 "name": "csv",
@@ -41,8 +42,8 @@ class TestWorkItemServiceFactory:
                 "startDateFormat": "%Y-%m-%d",
                 "closedDateFormat": "%Y-%m-%d",
                 "estimationColumn": "Points",
-                "itemTitleColumn": "Title"
-            }
+                "itemTitleColumn": "Title",
+            },
         ]
 
     def test_create_service_no_data_source_type(self, factory):
