@@ -2,11 +2,12 @@ from setuptools import setup, find_packages
 
 setup(
     name='flowpulse',
-    version='1.1.7',
+    version='1.1.8',
     packages=find_packages(),
     include_package_data=True,
     package_data={
         'flowpulse': ["ExampleConfig.json", 'logo.png'],
+        'flowpulse.services': ['logo.png'],
     },
     install_requires=[
         "requests", "azure-devops", "pandas", "numpy", "matplotlib", "adjustText"
