@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='flowpulse',
-    version='1.1.8',
+    version='1.1.9',
     packages=find_packages(),
     include_package_data=True,
     package_data={
@@ -28,5 +28,5 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.10',
 )

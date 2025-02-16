@@ -341,7 +341,7 @@ class FlowMetricsService:
         cycle_times = [item.cycle_time for item in filtered_items if item.cycle_time is not None]
 
         if not cycle_times:
-            print("No closed work items for plotting.")
+            print("Either no closed work items or items don't have an estimation - skipping chart creation.")
             return
         
         items = [item for item in filtered_items if item.closed_date and item.started_date]
@@ -381,13 +381,13 @@ class FlowMetricsService:
         if self.show_plots:
             plt.show()
             
-    def plot_total_age_process_behaviour_chart(self, work_items, baseline_start_date, baseline_end_date, history, chart_name):
+    def plot_total_age_process_behaviour_chart(self, work_items, baseline_start_date, baseline_end_date, chart_name):
         baseline_total_age = self.get_total_age_history_for_date_range(baseline_start_date, baseline_end_date, work_items)
         
         baseline_values = list(baseline_total_age.values())
         (baseline_average, unpl, lnpl) = self.caclulate_average_and_limits(baseline_values)
         
-        start_date = self.today - timedelta(days=history)
+        start_date = self.today - timedelta(days=self.history)
         total_age_data = self.get_total_age_history_for_date_range(start_date, self.today, work_items)
         
         x_values = [self.today - timedelta(days=days) for days in total_age_data.keys()]
@@ -395,13 +395,13 @@ class FlowMetricsService:
         
         self.plot_pbc(x_values, y_values, baseline_average, unpl, lnpl, "Total Work Item Age X Chart", "Date", "Total Age", chart_name)     
             
-    def plot_cycle_time_process_behaviour_chart(self, work_items, baseline_start_date, baseline_end_date, history, chart_name):
+    def plot_cycle_time_process_behaviour_chart(self, work_items, baseline_start_date, baseline_end_date, chart_name):
         baseline_cycle_time = self.get_cycle_time_history_for_date_range(baseline_start_date, baseline_end_date, work_items)
         
         baseline_values = [item.cycle_time for item in baseline_cycle_time.values()]
         (baseline_average, unpl, lnpl) = self.caclulate_average_and_limits(baseline_values)
         
-        start_date = self.today - timedelta(days=history)
+        start_date = self.today - timedelta(days=self.history)
         cycle_time_data = self.get_cycle_time_history_for_date_range(start_date, self.today, work_items)
         
         x_values = list(cycle_time_data.keys())
@@ -411,13 +411,13 @@ class FlowMetricsService:
         
         self.plot_pbc(x_values, y_values, baseline_average, unpl, lnpl, "Cycle Time X Chart", "Item", "Cycle Time", chart_name, item_texts)            
 
-    def plot_wip_process_behaviour_chart(self, work_items, baseline_start_date, baseline_end_date, history, chart_name):
+    def plot_wip_process_behaviour_chart(self, work_items, baseline_start_date, baseline_end_date, chart_name):
         baseline_wip = self.get_wip_history_for_date_range(baseline_start_date, baseline_end_date, work_items)
         
         baseline_values = list(baseline_wip.values())
         (baseline_average, unpl, lnpl) = self.caclulate_average_and_limits(baseline_values)
         
-        start_date = self.today - timedelta(days=history)
+        start_date = self.today - timedelta(days=self.history)
         wip_data = self.get_wip_history_for_date_range(start_date, self.today, work_items)
         
         x_values = [self.today - timedelta(days=days) for days in wip_data.keys()]        
@@ -425,13 +425,13 @@ class FlowMetricsService:
         
         self.plot_pbc(x_values, y_values, baseline_average, unpl, lnpl, "WIP X Chart", "Date", "WIP", chart_name)
             
-    def plot_throughput_process_behaviour_chart(self, work_items, baseline_start_date, baseline_end_date, history, chart_name):        
+    def plot_throughput_process_behaviour_chart(self, work_items, baseline_start_date, baseline_end_date, chart_name):        
         baseline_closed_items = self.get_throughput_history_for_date_range(baseline_start_date, baseline_end_date, work_items)
         
         baseline_values = list(baseline_closed_items.values())
         (baseline_average, unpl, lnpl) = self.caclulate_average_and_limits(baseline_values)
         
-        start_date = self.today - timedelta(days=history)
+        start_date = self.today - timedelta(days=self.history)
         throughput_data = self.get_throughput_history_for_date_range(start_date, self.today, work_items)
         
         x_values = [self.today - timedelta(days=days) for days in throughput_data.keys()]        
