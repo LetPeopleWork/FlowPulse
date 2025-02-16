@@ -4,10 +4,12 @@ from flowpulse.services.PackageService import PackageService
 
 
 @pytest.fixture
+@pytest.mark.integration
 def package_service():
     return PackageService()
 
 
+@pytest.mark.integration
 def test_init(package_service):
     assert package_service.package_name == "flowpulse"
     assert hasattr(package_service, "current_version")
@@ -70,6 +72,7 @@ def test_check_for_updates_error_handling(mock_requests, capsys):
     assert "Error checking for updates" in captured.out
 
 
+@pytest.mark.integration
 def test_print_logo(capsys):
     service = PackageService()
     service.print_logo()

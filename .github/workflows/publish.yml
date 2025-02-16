@@ -21,6 +21,7 @@ jobs:
   test:
     name: Lint and Test
     runs-on: ubuntu-latest
+    permissions: write-all
 
     steps:
       - name: Checkout code
