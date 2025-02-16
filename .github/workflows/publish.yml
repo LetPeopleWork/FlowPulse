@@ -6,6 +6,7 @@ on:
       - main
     paths:
     - "flowpulse/**"
+    - "tests/**"
     - "setup.py"
     - "requirements.txt"
     - ".github/workflows/publish.yml"
