@@ -91,6 +91,7 @@ jobs:
 
       - name: Install published version from TestPyPi
         run: |
+          sleep 10
           pwsh ./install_latest_test_package.ps1
 
       - name: Run flowpulse
@@ -148,6 +149,7 @@ jobs:
 
       - name: Install published version from TestPyPi
         run: |
+          sleep 10          
           pwsh ./install_latest_production_package.ps1
 
       - name: Run flowpulse
