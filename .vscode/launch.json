@@ -16,6 +16,18 @@
             "type": "debugpy",
             "request": "launch",
             "module": "flowpulse.main"
-        }
+        },
+        {
+            "name": "Python: Debug Tests",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "purpose": ["debug-test"],
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
     ]
 }

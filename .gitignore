@@ -164,3 +164,4 @@ Charts/*
 ExampleConfig.json
 !flowpulse/ExampleConfig.json
 ExampleFile.csv
+tests/testdata.csv
