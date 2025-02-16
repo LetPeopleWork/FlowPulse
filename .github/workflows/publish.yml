@@ -1,5 +1,11 @@
 name: Publish to PyPi
 
+env:
+  AzureDevOpsLighthouseIntegrationTestToken: ${{ secrets.AZUREDEVOPSLIGHTHOUSEINTEGRATIONTESTTOKEN }}
+  JiraLighthouseIntegrationTestToken: ${{ secrets.JIRALIGHTHOUSEINTEGRATIONTESTTOKEN }}
+  TWINE_PYPI_PASSWORD: ${{ secrets.TWINE_PYPI_PASSWORD }}
+  TWINE_TESTPYPI_PASSWORD: ${{ secrets.TWINE_TESTPYPI_PASSWORD }}
+
 on:
   push:
     branches:
@@ -10,10 +16,6 @@ on:
     - "setup.py"
     - "requirements.txt"
     - ".github/workflows/publish.yml"
-  
-env:
-    TWINE_PYPI_PASSWORD: ${{ secrets.TWINE_PYPI_PASSWORD }}
-    TWINE_TESTPYPI_PASSWORD: ${{ secrets.TWINE_TESTPYPI_PASSWORD }}
 
 jobs:
   test:
