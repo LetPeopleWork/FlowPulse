@@ -14,8 +14,9 @@ TODO Add Image of a Chart
 # Documentation Structure
 The documentation is structured into various chapters. In [Installation](./installation/installation.html) you can find information about how to get started with FlowPulse.
 
-Under [Configuration](./configuration/configuration.html) you’ll find everything you need to configure FlowPulse. This includes various ways of how to configure FlowPulse itself, as well as how you can connect to Work Tracking Systems like Jira and Azure DevOps.
-[Concepts](./concepts/concepts.html) guides you with your first steps in FlowPulse. In [FAQ](./faq/faq.html) you find frequently asked questions.
+Under [Configuration](./configuration/configuration.html) you’ll find everything you need to configure FlowPulse. This includes various ways of how to configure FlowPulse itself.
+
+[Data Sources](./datasource/datasources.html) explains from where (including Jira and Azure DevOps) you can load data, while [Charts](./charts/charts.html) and [Forecasts](./forecasts/forecasts.html) dive deeper into the respective Features. In [FAQ](./faq/faq.html) you find frequently asked questions.
 
 
 # Contributions

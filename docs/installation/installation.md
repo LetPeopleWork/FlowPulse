@@ -5,13 +5,13 @@ layout: home
 nav_order: 1
 ---
 
+This section will hopefully tell you everything you need to know to install, run, and update flowpulse.
+
 - TOC
 {:toc}
 
-# Installation
-FlowPulse is written in Python, and available as a published package on [PyPi](https://pypi.org/).
 
-## Prerequisites
+# Prerequisites
 Make sure you have Python 3.10 or higher installed on your system. You can check your Python version by opening a terminal and running:
 
 ```bash
@@ -22,6 +22,9 @@ If this shows Python 3.10 or higher, you're good to go. If not, or if you get an
 
 {: .note}
 It can be that you have to use `python3 --version`. If this is the case, please use always `python3` instead of `python` in the following commands.
+
+# Installation
+FlowPulse is written in Python, and available as a published package on [PyPi](https://pypi.org/).
 
 ## Python Package
 The best, and recommended way to install *FlowPulse* is via the Python Package Manager *pip*. Once you have made sure python is installed, you can download `flowpulse` via pip:
@@ -65,7 +68,7 @@ This is done via a configuration file. You can find all about this under [Config
 Following is a description of how you can specify which configuration to use.
 
 ## Example Configuration
-If no configuration is available, flowpulse will automatically create an `ExampleConfig.json` in your current directory and use this. The default [Data Source](../concepts/concepts.html) will be CSV, and *FlowPulse* will create a default CSV file and create some charts for you.
+If no configuration is available, flowpulse will automatically create an `ExampleConfig.json` in your current directory and use this. The default [Data Source](../datasource/datasources.html) will be CSV, and *FlowPulse* will create a default CSV file and create some charts for you.
 
 {: .recommended}
 It's recommended to rename your config file from *ExampleConfig.json* to something more meaningful (like *TeamNameConfig.json*) and to specify this configuration file when running it again: `flowpulse "TeamNameConfig.json"`.
@@ -120,7 +123,7 @@ We try to update flowpulse as often as needed. So you will sooner or later need 
 flowpulse is displaying a message if it detects that a newer version is available
 ```bash
 ------- Update Available -----------
-Update available: 1.1.8 (current: 1.1.11)
+Update available: 1.1.11 (current: 1.1.8)
 Run the following command to upgrade: 'python -m pip install --upgrade flowpulse'
 ------- Update Available -----------
 ```
