@@ -47,13 +47,17 @@ class ConfigService:
         return True
 
     def read_config(self, file_path):
-        print("Reading Config File from {0}".format(file_path))
+        try:
+            print("Reading Config File from {0}".format(file_path))
 
-        self.check_if_file_exists(file_path, True)
+            self.check_if_file_exists(file_path, True)
 
-        with open(file_path, "r") as file:
-            config_data = json.load(file)
-        return config_data
+            with open(file_path, "r") as file:
+                config_data = json.load(file)
+            return config_data
+        except:
+            print("Error reading config file: {0}".format(file_path))
+            raise
 
     def get_today(self, config):
         today = datetime.today()

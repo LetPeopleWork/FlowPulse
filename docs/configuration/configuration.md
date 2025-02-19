@@ -5,17 +5,21 @@ layout: home
 nav_order: 2
 ---
 
+The configuration can be made in one json file. Every version of flowpulse comes with an [ExampleConfig.json] that will be copied to your directory if no other configurations are specified or found in the folder.
+
+{: .important}
+You **must** follow the json specification for any changes you make in this file. Double Quotes (") as well as backslashes (\\) cannot be written in json like this. You have to "escape" it by prepending a \\. Thus if you want to write a ", you have to type \\". If you want to use a backslash, you must write \\ \\. Please reference the example configurations default values. As your queries will most likely include those, please keep this in mind.
+
+{: .recommendation}
+If you get an error `Error reading config file`, try to validate your json file with a [Json Validator](https://jsonlint.com/).
+
+The configuration consists out of four sections:
+
 - TOC
 {:toc}
 
 
-In the [ExampleConfig.json](https://github.com/LetPeopleWork/flowpulse/tree/main/flowpulse/ExampleConfig.json) file you can see the default configuration.
-There are general settings, Jira and Azure DevOps specific settings, configurations per chart you want to create and specific forecast settings. Below you can find a summary of the various options.
-
-
-**Important**: Double Quotes (") as well as backslashes (\\) cannot be written in json like this. You have to "escape" it by prepending a \\. Thus if you want to write a ", you have to type \\". If you want to use a backslash, you must write \\ \\. Please reference the example configurations default values. As your queries will most likely include those, please keep this in mind.
-
-### General
+# General
 
 | Name                   | Description                          | Sample Value      |
 |------------------------|--------------------------------------|--------------------|
@@ -24,6 +28,8 @@ There are general settings, Jira and Azure DevOps specific settings, configurati
 | ShowPlots              | If set to true, the script will stop and show you an interactive version of the chart before continuing.                | false              |
 rawDataCSV              | If specified, the work items returned by the query will additionally be stored in a csv file within the charts folder.                | workitems.csv     |
 today              | Specify to set a different "end date" for your charts and forecasts than today. Specify dates in the format "YYYY-MM-dd", for example 2024-08-19 for the 19th of August 2024. This setting helps you generate charts and forecasts for past date intervals, for example if you want to recreate charts for a given month in the past. The history parameter of the different charts uses the "Today" date as reference, and will "go back" from this one.                | null              |
+
+# Data Sources
 
 ### Jira Settings
 In order use `flowpulse` with Jira, you must specify against which Jira instance you are working. For this you need a url, as well as a [Personal Access Token](https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html) and your username. Furthermore you have to specify a query that gets the items of the team(s) you are interested in as well as how many days into the past you are interested in. Last but not least, you can specify which field you are using for estimates. The queries are written in [JQL](https://www.atlassian.com/blog/jira/jql-the-most-flexible-way-to-search-jira-14).
@@ -51,6 +57,9 @@ In order use `flowpulse` with Azure DevOps, you must specify against which Azure
 | history           | Number of days you look back for items (e.g. "90" for last 90 days), or date in the format "YYYY-MM-dd" (2024-08-19) to include all items since that date.            | 90             |
 | estimationField           | Which field is holding the estimates. You can see the "reference Name" for the fields if you browse to *https://dev.azure.com/%7Borganization%7D/%7Bproject%7D/_apis/wit/fields?api-version=7.1-preview.3* - and insert your organization and project            | Microsoft.VSTS.Scheduling.StoryPoints             |
 
+# Charts
+
+# Forecasts
 
 ### Forecast Settings
 You can add one or more forecasts. Forecasts need two inputs: The remaining items you want to forecast (when will they be done?) and a target date (how much can we get done till then). The target date is specified either as a date in the format *YYYY-mm-dd* or as number. If you specify a number, it will use the date that is this amount of days in the future. To get the remaining items, you specify a query that returns all items that are not yet done and you want to forecast. You can use all filters JQL has to offer, for example filtering by area path, tag, iteration path, or anything else.
