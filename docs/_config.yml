@@ -24,12 +24,15 @@ callouts:
   note:
     color: yellow
   definition:
-    title: Definition
     color: blue
   important:
     color: red
   recommendation:
     color: green
+
+nav_external_links:
+  - title: Configuration Generator
+    url: https://docs.flowpulse.letpeople.work/configgenerator.html
 
 aux_links:
   Let People Work: https://letpeople.work

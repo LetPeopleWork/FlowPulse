@@ -9,7 +9,7 @@ While csv is the most flexible datasource, the connection to your Jira or Azure 
 
 This tool is provided for free by [LetPeopleWork](https://letpeople.work). If you are curious about Flow Metrics, Kanban, #NoEstimates etc., feel free to reach out to us via [Slack](https://join.slack.com/t/let-people-work/shared_invite/zt-2y0zfim85-qhbgt8N0yw90G1P~JWXvlg)
 
-TODO Add Image of a Chart
+![Cycle Time Scatterplot](./assets/charts/CycleTime.png)
 
 # Documentation Structure
 The documentation is structured into various chapters. In [Installation](./installation/installation.html) you can find information about how to get started with FlowPulse.

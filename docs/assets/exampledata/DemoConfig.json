@@ -12,20 +12,20 @@
         {
             "name": "csv",
             "fileName": "DemoFile.csv",
-            "delimeter": ",",
+            "delimeter": ";",
             "startedDateColumn": "started_date",
             "closedDateColumn": "closed_date",
-            "startDateFormat": "%Y-%m-%d",
+            "startDateFormat": "%d.%m.%Y",
             "closedDateFormat": "",
-            "estimationColumn": "Story Points",
+            "estimationColumn": "estimation",
             "itemTitleColumn": "id"
         }
     ],
     "forecasts": [
         {
-            "name": "Release 24.10",
-            "remainingBacklogQuery": "issuetype in (\"Story\", \"Bug\") AND project = \"YourProject\" AND status not in (\"Done\") AND fixVersion = \"Release 24.10\"",
-            "targetDate": "2024-10-31"
+            "name": "Next Release",
+            "remainingBacklogQuery": "true",
+            "targetDate": 31
         },
         {
             "name": "Sprint Forecast",
@@ -47,19 +47,14 @@
                 "orange",
                 "lightgreen",
                 "darkgreen"
-            ],
-            "trend_settings": [
-                70,
-                25,
-                "purple"
             ]
         },
         {
             "type": "workItemAgeScatterPlot",
             "chartName": "WorkItemAge.png",
             "xAxisLines": [
-                5,
-                10
+                10,
+                12
             ],
             "xAxisLineColors": [
                 "orange",
