@@ -1,40 +1,24 @@
 {
     "general": {
         "datasource": "CSV",
-        "chartsFolder": "Charts",
+        "chartsFolder": "../charts",
         "showPlots": false,
         "rawDataCSV": "workitems.csv",
         "plotLabels": true,
         "history": 90,
-        "today": null
+        "today": "2025-02-21"
     },
     "dataSources": [
         {
-            "name": "azureDevOps",
-            "organizationUrl": "https://dev.azure.com/YourOrg",
-            "apiToken": "",
-            "itemQuery": "([System.WorkItemType] = \"User Story\" or [System.WorkItemType] = \"Bug\") AND [System.TeamProject] == \"Your Project\" AND [System.AreaPath] UNDER \"Team Project\\Team Name\"",
-            "estimationField": "Microsoft.VSTS.Scheduling.StoryPoints"
-        },
-        {
-            "name": "jira",
-            "url": "https://YourOrg.atlassian.net",
-            "username": "",
-            "apiToken": "",
-            "itemQuery": "issuetype in (\"Story\", \"Bug\") AND project = \"YourProject\" AND labels = \"YourTeamLabel\"",
-            "estimationField": "timetracking.originalEstimate",
-            "anonymizeLabel": false
-        },
-        {
             "name": "csv",
-            "fileName": "ExampleFile.csv",
-            "delimeter": ";",
-            "startedDateColumn": "Activated Date",
-            "closedDateColumn": "Closed Date",
-            "startDateFormat": "%m/%d/%Y %I:%M:%S %p",
+            "fileName": "DemoFile.csv",
+            "delimeter": ",",
+            "startedDateColumn": "started_date",
+            "closedDateColumn": "closed_date",
+            "startDateFormat": "%Y-%m-%d",
             "closedDateFormat": "",
             "estimationColumn": "Story Points",
-            "itemTitleColumn": "ID"
+            "itemTitleColumn": "id"
         }
     ],
     "forecasts": [
@@ -66,7 +50,7 @@
             ],
             "trend_settings": [
                 70,
-                10,
+                25,
                 "purple"
             ]
         },
@@ -104,8 +88,8 @@
         },
         {
             "type": "processBehaviourCharts",
-            "baselineStart": "2024-11-01",
-            "baselineEnd": "2024-11-30",
+            "baselineStart": "2024-01-01",
+            "baselineEnd": "2024-01-31",
             "throughputChartName": "Throughput_PBC.png",
             "cycleTimeChartName": "CycleTime_PBC.png",
             "wipChartName": "WorkInProgress_PBC.png",

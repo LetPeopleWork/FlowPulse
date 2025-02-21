@@ -55,7 +55,7 @@ class ConfigService:
             with open(file_path, "r") as file:
                 config_data = json.load(file)
             return config_data
-        except:
+        except (FileNotFoundError, json.JSONDecodeError):
             print("Error reading config file: {0}".format(file_path))
             raise
 
@@ -139,7 +139,7 @@ class ConfigService:
         return chart_config.get("type", None)
 
     def get_trend_settings(self, chart_config):
-        return chart_config.get("trendSettings", None)
+        return chart_config.get("trend_settings", None)
 
     def get_pbc_baseline_dates(self, pbc_chart_config):
         baseline_start = datetime.strptime(pbc_chart_config["baselineStart"], "%Y-%m-%d")
