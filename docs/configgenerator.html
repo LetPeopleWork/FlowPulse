@@ -403,8 +403,8 @@
 <div class="mb-3">
     <label class="form-label">Target Date Type</label>
     <select class="form-select target-date-type">
-        <option value="date">Fixed Date</option>
-        <option value="days">Days from Now</option>
+        <option value="Fixed Date">Fixed Date</option>
+        <option value="Days">Days</option>
     </select>
 </div>
 <div class="mb-3 target-date-input">
@@ -523,12 +523,12 @@
             const dateInput = $(this).closest('.forecast-item').find('.target-date-input');
             const daysInput = $(this).closest('.forecast-item').find('.target-days-input');
 
-            if ($(this).val() === 'date') {
+            if ($(this).val() === 'Fixed Date') {
                 dateInput.removeClass('d-none');
                 daysInput.addClass('d-none');
             } else {
                 dateInput.addClass('d-none');
-                daysInput.addClass('d-none');
+                daysInput.removeClass('d-none');
             }
         });
 
@@ -584,10 +584,10 @@
 
                 forecastItem.find('[name="forecasts[].name"]').val(forecast.name);
                 if (typeof forecast.targetDate === 'number') {
-                    forecastItem.find('.target-date-type').val('days').trigger('change');
+                    forecastItem.find('.target-date-type').val('Days').trigger('change');
                     forecastItem.find('[name="forecasts[].targetDays"]').val(forecast.targetDate);
                 } else {
-                    forecastItem.find('.target-date-type').val('date').trigger('change');
+                    forecastItem.find('.target-date-type').val('Fixed Date').trigger('change');
                     forecastItem.find('[name="forecasts[].targetDate"]').val(forecast.targetDate);
                 }
                 forecastItem.find('[name="forecasts[].remainingBacklogQuery"]').val(forecast.remainingBacklogQuery);
@@ -676,7 +676,7 @@
                 };
 
                 const dateType = $(this).find('.target-date-type').val();
-                if (dateType === 'date') {
+                if (dateType === 'Fixed Date') {
                     forecast.targetDate = $(this).find('[name="forecasts[].targetDate"]').val();
                 } else {
                     forecast.targetDate = parseInt($(this).find('[name="forecasts[].targetDays"]').val());
