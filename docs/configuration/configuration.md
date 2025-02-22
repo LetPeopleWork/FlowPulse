@@ -18,6 +18,16 @@ The configuration consists out of four sections:
 - TOC
 {:toc}
 
+# Configuration Generator
+We created a dedicated webpage where you can create your Config via UI. Check out our [Configuration Generator](../configgenerator.html).
+
+{: .note}
+The UI is experimental, and while we tested the default cases, it may be that some things don't work perfectly yet. If so, please let us know!
+
+The generator allows you to create the configuration without having to worry about json syntax. It also allows you to upload your existing configuration and adjust it.
+
+{: .important}
+While the UI is not storing any information, we strongly advise to remove any kind of token/password before you upload it. Better safe than sorry!
 
 # General
 The following options are available for the general FlowPulse configuration:
