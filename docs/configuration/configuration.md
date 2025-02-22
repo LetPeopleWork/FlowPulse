@@ -5,7 +5,7 @@ layout: home
 nav_order: 2
 ---
 
-The configuration can be made in one json file. Every version of flowpulse comes with an [ExampleConfig.json](https://github.com/LetPeopleWork/FlowPulse/blob/main/flowpulse/ExampleConfig.json) that will be copied to your directory if no other configurations are specified or found in the folder.
+The configuration can be made in one json file. Every version of FlowPulse comes with an [ExampleConfig.json](https://github.com/LetPeopleWork/FlowPulse/blob/main/FlowPulse/ExampleConfig.json) that will be copied to your directory if no other configurations are specified or found in the folder.
 
 {: .important}
 You **must** follow the json specification for any changes you make in this file. Double Quotes (") as well as backslashes (\\) cannot be written in json like this. You have to "escape" it by prepending a \\. Thus if you want to write a ", you have to type \\". If you want to use a backslash, you must write \\ \\. Please reference the example configurations default values. As your queries will most likely include those, please keep this in mind.
@@ -58,7 +58,7 @@ If you want to use CSV files as your data source, you need to specify how your C
 | itemTitleColumn           | Name of the column containing the work item identifier               | "ID", "Key"             |
 
 ## Jira
-In order use `flowpulse` with Jira, you must specify against which Jira instance you are working. For this you need a url, as well as a [Personal Access Token](https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html) and your username. Furthermore you have to specify a query that gets the items of the team(s) you are interested in as well as how many days into the past you are interested in. Last but not least, you can specify which field you are using for estimates. The queries are written in [JQL](https://www.atlassian.com/blog/jira/jql-the-most-flexible-way-to-search-jira-14).
+In order use FlowPulse with Jira, you must specify against which Jira instance you are working. For this you need a url, as well as a [Personal Access Token](https://confluence.atlassian.com/enterprise/using-personal-access-tokens-1026032365.html) and your username. Furthermore you have to specify a query that gets the items of the team(s) you are interested in as well as how many days into the past you are interested in. Last but not least, you can specify which field you are using for estimates. The queries are written in [JQL](https://www.atlassian.com/blog/jira/jql-the-most-flexible-way-to-search-jira-14).
 
 | Name                   | Description                          | Potential Values      |
 |------------------------|--------------------------------------|--------------------|
@@ -77,7 +77,7 @@ If you want to use custom fields, you have to figure out the name of this custom
 Check the [Atlassion Documentation](https://confluence.atlassian.com/jirakb/find-my-custom-field-id-number-in-jira-744522503.html) to find out how to get the id of your custom field.
 
 ## Azure DevOps
-In order use `flowpulse` with Azure DevOps, you must specify against which Azure DevOps organization you are working. For this you need a url, as well as a [Personal Access Token](https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=Windows). Furthermore you have to specify a query that gets the items of the team(s) you are interested in as well as how many days into the past you are interested in. Last but not least, you can specify which field you are using for estimates. The queries are written in [WIQL](https://learn.microsoft.com/en-us/azure/devops/boards/queries/wiql-syntax?view=azure-devops).
+In order use FlowPulse with Azure DevOps, you must specify against which Azure DevOps organization you are working. For this you need a url, as well as a [Personal Access Token](https://learn.microsoft.com/en-us/azure/devops/organizations/accounts/use-personal-access-tokens-to-authenticate?view=azure-devops&tabs=Windows). Furthermore you have to specify a query that gets the items of the team(s) you are interested in as well as how many days into the past you are interested in. Last but not least, you can specify which field you are using for estimates. The queries are written in [WIQL](https://learn.microsoft.com/en-us/azure/devops/boards/queries/wiql-syntax?view=azure-devops).
 
 
 | Name                   | Description                          | Sample Value      |

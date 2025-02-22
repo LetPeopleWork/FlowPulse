@@ -5,7 +5,7 @@ layout: home
 nav_order: 1
 ---
 
-This section will hopefully tell you everything you need to know to install, run, and update flowpulse.
+This section will hopefully tell you everything you need to know to install, run, and update FlowPulse.
 
 - TOC
 {:toc}
@@ -68,24 +68,24 @@ This is done via a configuration file. You can find all about this under [Config
 Following is a description of how you can specify which configuration to use.
 
 ## Example Configuration
-If no configuration is available, flowpulse will automatically create an `ExampleConfig.json` in your current directory and use this. The default [Data Source](../datasource/datasources.html) will be CSV, and *FlowPulse* will create a default CSV file and create some charts for you.
+If no configuration is available, FlowPulse will automatically create an `ExampleConfig.json` in your current directory and use this. The default [Data Source](../datasource/datasources.html) will be CSV, and *FlowPulse* will create a default CSV file and create some charts for you.
 
 {: .recommended}
 It's recommended to rename your config file from *ExampleConfig.json* to something more meaningful (like *TeamNameConfig.json*) and to specify this configuration file when running it again: `flowpulse "TeamNameConfig.json"`.
 
 ## Automatic Configuration Discovery
-flowpulse will scan the directory you start it from for *json* files. Every *.json* will be treated as flowpulse configuration and is automatically loaded. This means, if you have a *flowpulse* directory that has the following files:
+flowpulse will scan the directory you start it from for *json* files. Every *.json* will be treated as FlowPulse configuration and is automatically loaded. This means, if you have a *FlowPulse* directory that has the following files:
 
 ```bash
-- flowpulse/
+- FlowPulse/
     - TeamA_Config.json
     - TeamB_Config.json
     - TeamC_Config.json
 ```
 
-You can simply run the tool from the *flowpulse* directory and it will execute for every of those 3 configuration:
+You can simply run the tool from the *FlowPulse* directory and it will execute for every of those 3 configuration:
 
-    /flowpulse>flowpulse
+    /FlowPulse>FlowPulse
 
     No config files specified as arguments - trying to detect files in same directory
     Using following configuration files: ['TeamA_Config.json', 'TeamB_Config.json', 'TeamC_Config.json']
@@ -96,12 +96,12 @@ You can simply run the tool from the *flowpulse* directory and it will execute f
     ...
 
 ## Specify Configuration File
-You can also start flowpulse and specify which configuration file exactly you want to run, by putting the relative or absolute path after the startup parameters:
+You can also start FlowPulse and specify which configuration file exactly you want to run, by putting the relative or absolute path after the startup parameters:
 
 ```bash
 flowpulse "TeamA_Config.json"
 
-flowpulse "C:\Data\flowpulse\ExampleConfig.json"
+flowpulse "C:\Data\FlowPulse\ExampleConfig.json"
 ```
 
 You can also multiple configurations that you can use to create different charts and/or run different forecasts. For example for different teams or different item types (for example if you want to visualize Epics differently than other work items).
@@ -115,12 +115,12 @@ This will generate you three sets of charts as per the individual configurations
 {: .note}
 Make sure to specify different folders or chart names in the respective configs, as otherwise they will be overwritten.
 
-Check [Configuration](../configuration/configuration.html) to see all details on how to configure  `flowpulse`.
+Check [Configuration](../configuration/configuration.html) to see all details on how to configure  FlowPulse.
 
 # Updating FlowPulse
-We try to update flowpulse as often as needed. So you will sooner or later need to update it.
+We try to update FlowPulse as often as needed. So you will sooner or later need to update it.
 
-flowpulse is displaying a message if it detects that a newer version is available
+FlowPulse is displaying a message if it detects that a newer version is available
 ```bash
 ------- Update Available -----------
 Update available: 1.1.11 (current: 1.1.8)
@@ -129,7 +129,7 @@ Run the following command to upgrade: 'python -m pip install --upgrade flowpulse
 ```
 
 ## Python Package
-All you need to do to update flowpulse is run the update command:
+All you need to do to update FlowPulse is run the update command:
 ```bash
 python -m pip install --upgrade flowpulse
 ```
