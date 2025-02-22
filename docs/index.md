@@ -16,11 +16,11 @@ The documentation is structured into various chapters. In [Installation](./insta
 
 Under [Configuration](./configuration/configuration.html) you’ll find everything you need to configure FlowPulse. This includes various ways of how to configure FlowPulse itself.
 
-[Data Sources](./datasource/datasources.html) explains from where (including Jira and Azure DevOps) you can load data, while [Charts](./charts/charts.html) and [Forecasts](./forecasts/forecasts.html) dive deeper into the respective Features. In [FAQ](./faq/faq.html) you find frequently asked questions.
+[Data Sources](./datasource/datasources.html) explains from where (including Jira and Azure DevOps) you can load data, while [Charts](./charts/charts.html) and [Forecasts](./forecasts/forecasts.html) dive deeper into the respective Features.
 
 
-# Contributions
-If you want to help us improve the documentation, please check out the options unde [Contributions](./contributions/contributions.html).
+# Contributions & Questions
+If you want to help us improve the documentation, please check out the options unde [Contributions](./contributions/contributions.html). If you have specific questions, it's best to join our [Slack Community](https://join.slack.com/t/let-people-work/shared_invite/zt-2y0zfim85-qhbgt8N0yw90G1P~JWXvlg).
 
 # Config Generator
 You can use our [Config Generator](./configgenerator.html) to help you get started with your first configuration.

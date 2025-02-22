@@ -91,7 +91,7 @@ Sometimes it can be useful to compare estimates with how long items took. In man
 
 ![Estimation vs. Cycle Time](../assets/charts/EstimationVsCycleTime.png)
 
-In the above chart, you can see the cycle-time on the y-axis and the estimates on the x-axis. One would assume that there is some kind of correlation, so in general, a higher estimate would mean things take longer. Reality often looks more like the example above. Actual time to complete items seems to not have any relation to the estimates. A good example of this is items that were estimated with a 5: They range from 2 days to 27 days.
+In the above chart, you can see the cycle-time on the y-axis and the estimates on the x-axis. One would assume that there is some kind of correlation, so in general, a higher estimate would mean things take longer. Reality often looks more like the example above. Actual time to complete items seems to not have any relation to the estimates. A good example of this is items that were estimated with an 8: They range from 2 days to 14 days.
 
 Goal of this chart is to support you to make such things visible, helping people understand the waste of time estimation often is and spending the time on more meaningful things.
 

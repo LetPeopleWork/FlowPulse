@@ -25,7 +25,7 @@
         {
             "name": "Next Release",
             "remainingBacklogQuery": "true",
-            "targetDate": 31
+            "targetDate": 120
         },
         {
             "name": "Sprint Forecast",
