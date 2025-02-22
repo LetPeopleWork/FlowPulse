@@ -55,7 +55,7 @@ class WorkItemServiceFactory:
     def _create_csv_service(self, csv_config, history_in_days, today):
         return CsvService(
             csv_config["fileName"],
-            csv_config["delimeter"],
+            csv_config["delimiter"],
             csv_config["startedDateColumn"],
             csv_config["closedDateColumn"],
             csv_config["startDateFormat"],

@@ -36,7 +36,7 @@ class TestWorkItemServiceFactory:
             {
                 "name": "csv",
                 "fileName": "tests/testdata.csv",
-                "delimeter": ",",
+                "delimiter": ",",
                 "startedDateColumn": "Started",
                 "closedDateColumn": "Closed",
                 "startDateFormat": "%Y-%m-%d",

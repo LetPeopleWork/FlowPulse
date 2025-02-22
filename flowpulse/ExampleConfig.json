@@ -28,7 +28,7 @@
         {
             "name": "csv",
             "fileName": "ExampleFile.csv",
-            "delimeter": ";",
+            "delimiter": ";",
             "startedDateColumn": "Activated Date",
             "closedDateColumn": "Closed Date",
             "startDateFormat": "%m/%d/%Y %I:%M:%S %p",

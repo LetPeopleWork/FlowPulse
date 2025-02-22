@@ -12,7 +12,7 @@
         {
             "name": "csv",
             "fileName": "DemoFile.csv",
-            "delimeter": ";",
+            "delimiter": ";",
             "startedDateColumn": "started_date",
             "closedDateColumn": "closed_date",
             "startDateFormat": "%d.%m.%Y",

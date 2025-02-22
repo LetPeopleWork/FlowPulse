@@ -49,7 +49,7 @@ If you want to use CSV files as your data source, you need to specify how your C
 | Name                   | Description                          | Potential Values      |
 |------------------------|--------------------------------------|--------------------|
 | fileName           | Name of the CSV file containing your work item data               | ExampleFile.csv             |
-| delimeter           | The character used to separate columns in your CSV file               | ";" or ","              |
+| delimiter           | The character used to separate columns in your CSV file               | ";" or ","              |
 | startedDateColumn           | Name of the column that contains the date when work was started on an item               | "Activated Date", "Started Date"             |
 | closedDateColumn           | Name of the column that contains the date when work was completed               | "Closed Date", "Completed Date"             |
 | startDateFormat           | Format string for parsing the start date. Uses Python's datetime format codes               | "%m/%d/%Y", "%Y-%m-%d", "%d.%m.%Y"             |

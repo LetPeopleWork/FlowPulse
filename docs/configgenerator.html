@@ -19,6 +19,15 @@
         <div class="row mb-4">
             <div class="col">
                 <h1>FlowPulse Configuration Editor</h1>
+                <div class="d-flex gap-2 mt-3">
+                    <button type="submit" class="btn btn-primary">Download Configuration</button>
+                    <div class="btn-group">
+                        <label class="btn btn-secondary">
+                            Upload Configuration
+                            <input type="file" id="configUpload" accept=".json" class="d-none">
+                        </label>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -118,11 +127,6 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col">
-                    <button type="submit" class="btn btn-primary">Download Configuration</button>
-                </div>
-            </div>
         </form>
     </div>
 
@@ -491,7 +495,7 @@
             chartItem.prepend(`
                 <div class="mb-3">
                     <label class="form-label">Chart Type</label>
-                    <input type="text" class="form-control" name="charts[].type" value="${selectedType}" readonly>
+                    <input type="text" class="form-control" name="charts[].type" value="${selectedType}" readonly disabled>
                 </div>
             `);
             $('#chartsContainer').append(chartItem);
@@ -542,6 +546,12 @@
             $('[name="general.rawDataCSV"]').val(config.general.rawDataCSV);
             $('[name="general.plotLabels"]').prop('checked', config.general.plotLabels);
             $('[name="general.historyType"]').val(config.general.historyType).trigger('change');
+            if (typeof config.general.history === 'number') {
+                $('[name="general.historyType"]').val('days');
+            } else {
+                $('[name="general.historyType"]').val('date');
+            }
+
             if (config.general.historyType === 'date') {
                 $('[name="general.historyDate"]').val(config.general.history);
             } else {
@@ -587,10 +597,19 @@
             // Populate charts
             $('#chartsContainer').empty();
             config.charts.forEach(chart => {
-                const chartType = Object.keys(chartTypes).find(type => type === chart.type);
-                if (chartType) {
+                const chartType = chart.type; // Get the type directly from the chart
+                if (chartTypes[chartType]) {
                     const template = chartTypes[chartType].template;
                     const chartItem = $(template);
+
+                    // Prepend the chart type field
+                    chartItem.prepend(`
+                        <div class="mb-3">
+                            <label class="form-label">Chart Type</label>
+                            <input type="text" class="form-control" name="charts[].type" value="${chartType}" readonly disabled>
+                        </div>
+                    `);
+                    
                     $('#chartsContainer').append(chartItem);
 
                     // Populate chart fields
@@ -716,6 +735,40 @@
             initializeDatepicker('[name="general.today"]');
             initializeDatepicker('[name="general.historyDate"]');
         });
+
+        // Add file upload handler after the populateForm function
+        document.getElementById('configUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const config = JSON.parse(e.target.result);
+                        populateForm(config);
+                    } catch (error) {
+                        alert('Error parsing configuration file: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+            // Reset the file input so the same file can be loaded again if needed
+            this.value = '';
+        });
+
+        // Auto-load example configuration on page load
+        fetch('./assets/exampledata/DemoConfig.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(config => {
+                populateForm(config);
+            })
+            .catch(error => {
+                console.error('Error loading example configuration:', error);
+            });
     </script>
 </body>
 
