@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configuration Editor</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css"
+        rel="stylesheet">
 </head>
+
 <body class="bg-light">
+    <div class="alert alert-secondary my-3">
+        This is a config generator, but it might not reflect the latest settings. Use with caution.
+        All details about the configuration can be found in <a href="./configuration/configuration.html">the documentation</a>.
+    </div>
     <div class="container my-5">
         <div class="row mb-4">
             <div class="col">
-                <h1>Configuration Editor</h1>
-                <div class="mb-3">
-                    <label for="configFile" class="form-label">Upload existing config:</label>
-                    <input type="file" class="form-control" id="configFile" accept=".json">
-                </div>
+                <h1>FlowPulse Configuration Editor</h1>
             </div>
         </div>
 
@@ -30,10 +33,10 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Data Source</label>
-                                <select class="form-select" name="general.datasource">
-                                    <option value="Azure DevOps">Azure DevOps</option>
-                                    <option value="Jira">Jira</option>
+                                <select class="form-select" name="general.datasource" id="dataSourceSelect">
                                     <option value="CSV">CSV</option>
+                                    <option value="azuredevops">Azure DevOps</option>
+                                    <option value="Jira">Jira</option>
                                 </select>
                             </div>
                         </div>
@@ -53,8 +56,19 @@
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
+                                <label class="form-label">History Type</label>
+                                <select class="form-select" id="historyTypeSelect" name="general.historyType">
+                                    <option value="days">Days</option>
+                                    <option value="date">Fixed Date</option>
+                                </select>
+                            </div>
+                            <div class="mb-3" id="historyDaysContainer">
                                 <label class="form-label">History (days)</label>
-                                <input type="number" class="form-control" name="general.history">
+                                <input type="number" class="form-control" name="general.historyDays" value="90">
+                            </div>
+                            <div class="mb-3" id="historyDateContainer" style="display:none;">
+                                <label class="form-label">History (date)</label>
+                                <input type="text" class="form-control datepicker" name="general.historyDate">
                             </div>
                         </div>
                     </div>
@@ -66,32 +80,20 @@
                         <input type="checkbox" class="form-check-input" name="general.plotLabels" id="plotLabels">
                         <label class="form-check-label" for="plotLabels">Plot Labels</label>
                     </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" name="general.overrideToday" id="overrideToday">
+                        <label class="form-check-label" for="overrideToday">Override Today's Date</label>
+                    </div>
+                    <div class="mb-3" id="overrideTodayContainer" style="display:none;">
+                        <label class="form-label">Today's Date</label>
+                        <input type="text" class="form-control datepicker" name="general.today">
+                    </div>
                 </div>
             </div>
 
-            <!-- Azure DevOps Settings -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h4>Azure DevOps Settings</h4>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label class="form-label">Organization URL</label>
-                        <input type="url" class="form-control" name="azureDevOps.organizationUrl">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">API Token</label>
-                        <input type="password" class="form-control" name="azureDevOps.apiToken">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Item Query</label>
-                        <textarea class="form-control" name="azureDevOps.itemQuery" rows="3"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Estimation Field</label>
-                        <input type="text" class="form-control" name="azureDevOps.estimationField">
-                    </div>
-                </div>
+            <!-- Data Source Settings -->
+            <div id="dataSourceSettings">
+                <!-- Will be populated dynamically based on selected data source -->
             </div>
 
             <!-- Forecasts -->
@@ -105,23 +107,14 @@
                 </div>
             </div>
 
-            <!-- Charts Configuration -->
+            <!-- Charts -->
             <div class="card mb-4">
-                <div class="card-header">
-                    <h4>Charts Configuration</h4>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4>Charts</h4>
+                    <button type="button" class="btn btn-primary btn-sm" id="addChart">Add Chart</button>
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <h5>Cycle Time Scatter Plot</h5>
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" name="cycleTimeScatterPlot.generate" id="generateCycleTime">
-                            <label class="form-check-label" for="generateCycleTime">Generate Chart</label>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Chart Name</label>
-                            <input type="text" class="form-control" name="cycleTimeScatterPlot.chartName">
-                        </div>
-                    </div>
+                <div class="card-body" id="chartsContainer">
+                    <!-- Charts will be added here dynamically -->
                 </div>
             </div>
 
@@ -135,27 +128,328 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
 
     <script>
+        // Data source configurations
+        const dataSourceConfigs = {
+            'azuredevops': {
+                template: `
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Azure DevOps Settings</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Organization URL</label>
+                                <input type="url" class="form-control" name="azuredevops.organizationUrl">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">API Token</label>
+                                <input type="password" class="form-control" name="azuredevops.apiToken">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Item Query</label>
+                                <textarea class="form-control" name="azuredevops.itemQuery" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Estimation Field</label>
+                                <input type="text" class="form-control" name="azuredevops.estimationField">
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            'Jira': {
+                template: `
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Jira Settings</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">URL</label>
+                                <input type="url" class="form-control" name="jira.url">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-control" name="jira.username">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">API Token</label>
+                                <input type="password" class="form-control" name="jira.apiToken">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Item Query</label>
+                                <textarea class="form-control" name="jira.itemQuery" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Estimation Field</label>
+                                <input type="text" class="form-control" name="jira.estimationField">
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" name="jira.anonymizeLabel">
+                                <label class="form-check-label">Anonymize Label</label>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            'CSV': {
+                template: `
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>CSV Settings</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">File Name</label>
+                                <input type="text" class="form-control" name="csv.fileName">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Delimiter</label>
+                                <input type="text" class="form-control" name="csv.delimiter">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Started Date Column</label>
+                                <input type="text" class="form-control" name="csv.startedDateColumn">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Closed Date Column</label>
+                                <input type="text" class="form-control" name="csv.closedDateColumn">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Start Date Format</label>
+                                <input type="text" class="form-control" name="csv.startDateFormat">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Closed Date Format</label>
+                                <input type="text" class="form-control" name="csv.closedDateFormat">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Estimation Column</label>
+                                <input type="text" class="form-control" name="csv.estimationColumn">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Item Title Column</label>
+                                <input type="text" class="form-control" name="csv.itemTitleColumn">
+                            </div>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Chart types and their configurations
+        const chartTypes = {
+            cycleTimeScatterPlot: {
+                name: 'Cycle Time Scatter Plot',
+                template: `
+                    <div class="chart-item border-bottom pb-3 mb-3">
+                        <div class="mb-3">
+                            <label class="form-label">Chart Name</label>
+                            <input type="text" class="form-control" name="charts[].chartName" value="CycleTime.png">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Percentiles (comma-separated)</label>
+                            <input type="text" class="form-control" name="charts[].percentiles" value="50,70,85,95">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Percentile Colors (comma-separated)</label>
+                            <input type="text" class="form-control" name="charts[].percentileColors" value="red,orange,lightgreen,darkgreen">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Trend Settings (window,samples,color)</label>
+                            <input type="text" class="form-control" name="charts[].trend_settings" value="70,10,purple">
+                        </div>
+                        <button type="button" class="btn btn-danger btn-sm remove-chart">Remove Chart</button>
+                    </div>
+                `
+            },
+            workItemAgeScatterPlot: {
+                name: 'Work Item Age Scatter Plot',
+                template: `
+                    <div class="chart-item border-bottom pb-3 mb-3">
+                        <div class="mb-3">
+                            <label class="form-label">Chart Name</label>
+                            <input type="text" class="form-control" name="charts[].chartName" value="WorkItemAge.png">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">X-Axis Lines (comma-separated)</label>
+                            <input type="text" class="form-control" name="charts[].xAxisLines" value="5,10">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">X-Axis Line Colors (comma-separated)</label>
+                            <input type="text" class="form-control" name="charts[].xAxisLineColors" value="orange,red">
+                        </div>
+                        <button type="button" class="btn btn-danger btn-sm remove-chart">Remove Chart</button>
+                    </div>
+                `
+            },
+            throughputRunChart: {
+                name: 'Throughput Run Chart',
+                template: `
+                    <div class="chart-item border-bottom pb-3 mb-3">
+                        <div class="mb-3">
+                            <label class="form-label">Chart Name</label>
+                            <input type="text" class="form-control" name="charts[].chartName" value="Throughput.png">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Unit</label>
+                            <select class="form-select" name="charts[].unit">
+                                <option value="days">days</option>
+                                <option value="weeks">weeks</option>
+                                <option value="months">months</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-danger btn-sm remove-chart">Remove Chart</button>
+                    </div>
+                `
+            },
+            workInProcessRunChart: {
+                name: 'Work In Process Run Chart',
+                template: `
+                    <div class="chart-item border-bottom pb-3 mb-3">
+                        <div class="mb-3">
+                            <label class="form-label">Chart Name</label>
+                            <input type="text" class="form-control" name="charts[].chartName" value="WorkInProcess.png">
+                        </div>
+                        <button type="button" class="btn btn-danger btn-sm remove-chart">Remove Chart</button>
+                    </div>
+                `
+            },
+            startedVsFinishedChart: {
+                name: 'Started vs Finished Chart',
+                template: `
+                    <div class="chart-item border-bottom pb-3 mb-3">
+                        <div class="mb-3">
+                            <label class="form-label">Chart Name</label>
+                            <input type="text" class="form-control" name="charts[].chartName" value="StartedVsFinished.png">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Started Color</label>
+                            <input type="text" class="form-control" name="charts[].startedColor" value="orange">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Closed Color</label>
+                            <input type="text" class="form-control" name="charts[].closedColor" value="green">
+                        </div>
+                        <button type="button" class="btn btn-danger btn-sm remove-chart">Remove Chart</button>
+</div>
+`
+            },
+            estimationVsCycleTime: {
+                name: 'Estimation vs Cycle Time',
+                template: `
+    <div class="chart-item border-bottom pb-3 mb-3">
+        <div class="mb-3">
+            <label class="form-label">Chart Name</label>
+            <input type="text" class="form-control" name="charts[].chartName" value="EstimationVsCycleTime.png">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Estimation Unit</label>
+            <input type="text" class="form-control" name="charts[].estimationUnit" value="Story Points">
+        </div>
+        <button type="button" class="btn btn-danger btn-sm remove-chart">Remove Chart</button>
+    </div>
+`
+            },
+            processBehaviourCharts: {
+                name: 'Process Behaviour Charts',
+                template: `
+    <div class="chart-item border-bottom pb-3 mb-3">
+        <div class="mb-3">
+            <label class="form-label">Baseline Start</label>
+            <input type="text" class="form-control datepicker" name="charts[].baselineStart">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Baseline End</label>
+            <input type="text" class="form-control datepicker" name="charts[].baselineEnd">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Throughput Chart Name</label>
+            <input type="text" class="form-control" name="charts[].throughputChartName" value="Throughput_PBC.png">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Cycle Time Chart Name</label>
+            <input type="text" class="form-control" name="charts[].cycleTimeChartName" value="CycleTime_PBC.png">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">WIP Chart Name</label>
+            <input type="text" class="form-control" name="charts[].wipChartName" value="WorkInProgress_PBC.png">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Item Age Chart Name</label>
+            <input type="text" class="form-control" name="charts[].itemAgeChartName" value="WorkItemAge_PBC.png">
+        </div>
+        <button type="button" class="btn btn-danger btn-sm remove-chart">Remove Chart</button>
+    </div>
+`
+            }
+        };
+
         // Forecast template
         const forecastTemplate = `
-            <div class="forecast-item border-bottom pb-3 mb-3">
-                <div class="mb-3">
-                    <label class="form-label">Name</label>
-                    <input type="text" class="form-control" name="forecasts[].name">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Remaining Backlog Query</label>
-                    <textarea class="form-control" name="forecasts[].remainingBacklogQuery" rows="2"></textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Target Date</label>
-                    <input type="text" class="form-control datepicker" name="forecasts[].targetDate">
-                </div>
-                <button type="button" class="btn btn-danger btn-sm remove-forecast">Remove</button>
+<div class="forecast-item border-bottom pb-3 mb-3">
+<div class="mb-3">
+    <label class="form-label">Name</label>
+    <input type="text" class="form-control" name="forecasts[].name">
+</div>
+<div class="mb-3">
+    <label class="form-label">Target Date Type</label>
+    <select class="form-select target-date-type">
+        <option value="date">Fixed Date</option>
+        <option value="days">Days from Now</option>
+    </select>
+</div>
+<div class="mb-3 target-date-input">
+    <label class="form-label">Target Date</label>
+    <input type="text" class="form-control datepicker" name="forecasts[].targetDate">
+</div>
+<div class="mb-3 target-days-input d-none">
+    <label class="form-label">Days from Now</label>
+    <input type="number" class="form-control" name="forecasts[].targetDays">
+</div>
+<div class="mb-3">
+    <label class="form-label">Remaining Backlog Query</label>
+    <textarea class="form-control" name="forecasts[].remainingBacklogQuery" rows="2"></textarea>
+</div>
+<button type="button" class="btn btn-danger btn-sm remove-forecast">Remove</button>
+</div>
+`;
+
+        // Add chart dialog template
+        const chartDialogTemplate = `
+<div class="modal fade" id="addChartModal" tabindex="-1">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Add Chart</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-3">
+                <label class="form-label">Chart Type</label>
+                <select class="form-select" id="chartTypeSelect">
+                    ${Object.entries(chartTypes).map(([key, value]) =>
+            `<option value="${key}">${value.name}</option>`
+        ).join('')}
+                </select>
             </div>
-        `;
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="confirmAddChart">Add</button>
+        </div>
+    </div>
+</div>
+</div>
+`;
+
+        // Add chart dialog to the page
+        document.body.insertAdjacentHTML('beforeend', chartDialogTemplate);
+        const addChartModal = new bootstrap.Modal(document.getElementById('addChartModal'));
 
         // Initialize datepicker for dynamic elements
         function initializeDatepicker(element) {
@@ -165,73 +459,160 @@
             });
         }
 
-        // Add forecast
-        $('#addForecast').click(function() {
+        // Data source change handler
+        $('#dataSourceSelect').change(function () {
+            const selectedSource = $(this).val();
+            const template = dataSourceConfigs[selectedSource].template;
+            $('#dataSourceSettings').html(template);
+        });
+
+        // Trigger initial data source template
+        $('#dataSourceSelect').trigger('change');
+
+        // Add forecast handler
+        $('#addForecast').click(function () {
             const forecastItem = $(forecastTemplate);
             $('#forecastsContainer').append(forecastItem);
             initializeDatepicker(forecastItem.find('.datepicker'));
         });
 
-        // Remove forecast
-        $(document).on('click', '.remove-forecast', function() {
+        // Add chart handler
+        $('#addChart').click(function () {
+            addChartModal.show();
+        });
+
+        // Confirm add chart handler
+        $('#confirmAddChart').click(function () {
+            const selectedType = $('#chartTypeSelect').val();
+            const template = chartTypes[selectedType].template;
+
+            // Prepend a read-only input showing the selected chart type.
+            const chartItem = $(template);
+            chartItem.prepend(`
+                <div class="mb-3">
+                    <label class="form-label">Chart Type</label>
+                    <input type="text" class="form-control" name="charts[].type" value="${selectedType}" readonly>
+                </div>
+            `);
+            $('#chartsContainer').append(chartItem);
+            addChartModal.hide();
+
+            // Initialize datepickers in the new chart if any
+            const newChart = $('#chartsContainer .chart-item:last');
+            newChart.find('.datepicker').each(function () {
+                initializeDatepicker(this);
+            });
+        });
+
+        // Remove forecast handler
+        $(document).on('click', '.remove-forecast', function () {
             $(this).closest('.forecast-item').remove();
         });
 
-        // File upload handler
-        $('#configFile').change(function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const config = JSON.parse(e.target.result);
-                        populateForm(config);
-                    } catch (error) {
-                        alert('Error parsing JSON file');
-                    }
-                };
-                reader.readAsText(file);
+        // Remove chart handler
+        $(document).on('click', '.remove-chart', function () {
+            $(this).closest('.chart-item').remove();
+        });
+
+        // Target date type change handler
+        $(document).on('change', '.target-date-type', function () {
+            const dateInput = $(this).closest('.forecast-item').find('.target-date-input');
+            const daysInput = $(this).closest('.forecast-item').find('.target-days-input');
+
+            if ($(this).val() === 'date') {
+                dateInput.removeClass('d-none');
+                daysInput.addClass('d-none');
+            } else {
+                dateInput.addClass('d-none');
+                daysInput.addClass('d-none');
             }
+        });
+
+        // Toggle override today container
+        $(document).on('change', '#overrideToday', function () {
+            $('#overrideTodayContainer').toggle(this.checked);
         });
 
         // Populate form with config data
         function populateForm(config) {
             // Populate general settings
-            Object.entries(config.general).forEach(([key, value]) => {
-                const element = document.querySelector(`[name="general.${key}"]`);
-                if (element) {
-                    if (element.type === 'checkbox') {
-                        element.checked = value;
-                    } else {
-                        element.value = value;
-                    }
-                }
-            });
+            $('[name="general.datasource"]').val(config.general.datasource).trigger('change');
+            $('[name="general.chartsFolder"]').val(config.general.chartsFolder);
+            $('[name="general.showPlots"]').prop('checked', config.general.showPlots);
+            $('[name="general.rawDataCSV"]').val(config.general.rawDataCSV);
+            $('[name="general.plotLabels"]').prop('checked', config.general.plotLabels);
+            $('[name="general.historyType"]').val(config.general.historyType).trigger('change');
+            if (config.general.historyType === 'date') {
+                $('[name="general.historyDate"]').val(config.general.history);
+            } else {
+                $('[name="general.historyDays"]').val(config.general.history);
+            }
 
-            // Populate Azure DevOps settings
-            Object.entries(config.azureDevOps).forEach(([key, value]) => {
-                const element = document.querySelector(`[name="azureDevOps.${key}"]`);
-                if (element) {
-                    element.value = value;
-                }
-            });
+            if (config.general.today) {
+                $('#overrideToday').prop('checked', true);
+                $('#overrideTodayContainer').show();
+                $('[name="general.today"]').val(config.general.today);
+            }
+
+            // Populate data source settings based on type
+            const dataSource = config.dataSources.find(ds =>
+                ds.name.toLowerCase() === config.general.datasource.toLowerCase()
+            );
+            if (dataSource) {
+                Object.entries(dataSource).forEach(([key, value]) => {
+                    if (key !== 'name') {
+                        $(`[name="${config.general.datasource.toLowerCase()}.${key}"]`).val(value);
+                    }
+                });
+            }
 
             // Populate forecasts
             $('#forecastsContainer').empty();
             config.forecasts.forEach(forecast => {
                 const forecastItem = $(forecastTemplate);
-                forecastItem.find('[name="forecasts[].name"]').val(forecast.name);
-                forecastItem.find('[name="forecasts[].remainingBacklogQuery"]').val(forecast.remainingBacklogQuery);
-                forecastItem.find('[name="forecasts[].targetDate"]').val(forecast.targetDate);
                 $('#forecastsContainer').append(forecastItem);
+
+                forecastItem.find('[name="forecasts[].name"]').val(forecast.name);
+                if (typeof forecast.targetDate === 'number') {
+                    forecastItem.find('.target-date-type').val('days').trigger('change');
+                    forecastItem.find('[name="forecasts[].targetDays"]').val(forecast.targetDate);
+                } else {
+                    forecastItem.find('.target-date-type').val('date').trigger('change');
+                    forecastItem.find('[name="forecasts[].targetDate"]').val(forecast.targetDate);
+                }
+                forecastItem.find('[name="forecasts[].remainingBacklogQuery"]').val(forecast.remainingBacklogQuery);
                 initializeDatepicker(forecastItem.find('.datepicker'));
+            });
+
+            // Populate charts
+            $('#chartsContainer').empty();
+            config.charts.forEach(chart => {
+                const chartType = Object.keys(chartTypes).find(type => type === chart.type);
+                if (chartType) {
+                    const template = chartTypes[chartType].template;
+                    const chartItem = $(template);
+                    $('#chartsContainer').append(chartItem);
+
+                    // Populate chart fields
+                    Object.entries(chart).forEach(([key, value]) => {
+                        if (Array.isArray(value)) {
+                            value = value.join(',');
+                        }
+                        chartItem.find(`[name="charts[].${key}"]`).val(value);
+                    });
+
+                    // Initialize datepickers if any
+                    chartItem.find('.datepicker').each(function () {
+                        initializeDatepicker(this);
+                    });
+                }
             });
         }
 
         // Form submit handler
-        $('#configForm').submit(function(e) {
+        $('#configForm').submit(function (e) {
             e.preventDefault();
-            
+
             // Collect form data
             const formData = {
                 general: {
@@ -240,26 +621,72 @@
                     showPlots: $('[name="general.showPlots"]').prop('checked'),
                     rawDataCSV: $('[name="general.rawDataCSV"]').val(),
                     plotLabels: $('[name="general.plotLabels"]').prop('checked'),
-                    history: parseInt($('[name="general.history"]').val()),
-                    today: null
+                    historyType: $('[name="general.historyType"]').val(),
+                    history: $('[name="general.historyType"]').val() === 'date' ?
+                        $('[name="general.historyDate"]').val() :
+                        parseInt($('[name="general.historyDays"]').val()),
+                    today: $('#overrideToday').prop('checked') 
+                        ? $('[name="general.today"]').val() 
+                        : null
                 },
-                azureDevOps: {
-                    organizationUrl: $('[name="azureDevOps.organizationUrl"]').val(),
-                    apiToken: $('[name="azureDevOps.apiToken"]').val(),
-                    itemQuery: $('[name="azureDevOps.itemQuery"]').val(),
-                    estimationField: $('[name="azureDevOps.estimationField"]').val()
-                },
-                forecasts: []
+                dataSources: [],
+                forecasts: [],
+                charts: []
             };
 
+            // Collect data source settings
+            const selectedSource = formData.general.datasource.toLowerCase();
+            const dataSourceData = {};
+            $(`[name^="${selectedSource}."]`).each(function () {
+                const key = $(this).attr('name').split('.')[1];
+                const value = $(this).attr('type') === 'checkbox' ?
+                    $(this).prop('checked') :
+                    $(this).val();
+                dataSourceData[key] = value;
+            });
+            formData.dataSources.push({
+                name: selectedSource,
+                ...dataSourceData
+            });
+
             // Collect forecasts
-            $('.forecast-item').each(function() {
+            $('.forecast-item').each(function () {
                 const forecast = {
                     name: $(this).find('[name="forecasts[].name"]').val(),
-                    remainingBacklogQuery: $(this).find('[name="forecasts[].remainingBacklogQuery"]').val(),
-                    targetDate: $(this).find('[name="forecasts[].targetDate"]').val()
+                    remainingBacklogQuery: $(this).find('[name="forecasts[].remainingBacklogQuery"]').val()
                 };
+
+                const dateType = $(this).find('.target-date-type').val();
+                if (dateType === 'date') {
+                    forecast.targetDate = $(this).find('[name="forecasts[].targetDate"]').val();
+                } else {
+                    forecast.targetDate = parseInt($(this).find('[name="forecasts[].targetDays"]').val());
+                }
+
                 formData.forecasts.push(forecast);
+            });
+
+            // Collect charts
+            $('.chart-item').each(function () {
+                const chart = {
+                    type: $(this).find('[name="charts[].type"]').val()
+                };
+
+                $(this).find('[name^="charts[]."]').each(function () {
+                    const key = $(this).attr('name').match(/charts\[\]\.(.+)/)[1];
+                    let value = $(this).val();
+
+                    // Convert comma-separated strings to arrays where needed
+                    if (key.match(/percentiles|xAxisLines|trend_settings|percentileColors|xAxisLineColors/)) {
+                        value = value.split(',').map(item => {
+                            return isNaN(item) ? item.trim() : Number(item.trim());
+                        });
+                    }
+
+                    chart[key] = value;
+                });
+
+                formData.charts.push(chart);
             });
 
             // Generate and download JSON file
@@ -268,12 +695,28 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'config.json';
+            a.download = 'FlowPulseConfig.json';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         });
+
+        $(document).on('change','#historyTypeSelect',function(){
+            if ($(this).val() === 'date') {
+                $('#historyDaysContainer').hide();
+                $('#historyDateContainer').show();
+            } else {
+                $('#historyDaysContainer').show();
+                $('#historyDateContainer').hide();
+            }
+        });
+
+        $(document).ready(function() {
+            initializeDatepicker('[name="general.today"]');
+            initializeDatepicker('[name="general.historyDate"]');
+        });
     </script>
 </body>
+
 </html>

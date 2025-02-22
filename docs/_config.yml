@@ -32,7 +32,9 @@ callouts:
 
 nav_external_links:
   - title: Configuration Generator
-    url: https://docs.flowpulse.letpeople.work/configgenerator.html
+    url: ./configgenerator.html
+    hide_icon: false 
+    opens_in_new_tab: true 
 
 aux_links:
   Let People Work: https://letpeople.work
