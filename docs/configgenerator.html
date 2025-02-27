@@ -20,7 +20,7 @@
             <div class="col">
                 <h1>FlowPulse Configuration Editor</h1>
                 <div class="d-flex gap-2 mt-3">
-                    <button type="submit" class="btn btn-primary">Download Configuration</button>
+                    <button type="button" id="downloadConfigButton" class="btn btn-primary">Download Configuration</button>
                     <div class="btn-group">
                         <label class="btn btn-secondary">
                             Upload Configuration
@@ -628,10 +628,8 @@
             });
         }
 
-        // Form submit handler
-        $('#configForm').submit(function (e) {
-            e.preventDefault();
-
+        // Form processing function
+        function processAndDownloadConfig() {
             // Collect form data
             const formData = {
                 general: {
@@ -719,6 +717,17 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+        }
+
+        // Form submit handler - prevent default action
+        $('#configForm').submit(function (e) {
+            e.preventDefault();
+        });
+
+        // Connect the download button to the processing function
+        $('#downloadConfigButton').click(function(e) {
+            e.preventDefault();
+            processAndDownloadConfig();
         });
 
         $(document).on('change','#historyTypeSelect',function(){
