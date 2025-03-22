@@ -97,7 +97,7 @@ class ConfigService:
         return history
 
     def get_raw_data_csv_path(self, config):
-        return config["general"].get("rawDataCsvPath", None)
+        return config["general"].get("rawDataCSV", None)
 
     def get_data_source(self, config):
         data_source = config["general"].get("datasource", "")
