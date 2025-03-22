@@ -46,13 +46,10 @@ def test_raw_data_csv_generation():
         config = json.load(f)
 
     raw_data_csv_filename = config["general"]["rawDataCSV"]
-    charts_folder = config["general"]["chartsFolder"].replace("../", "")
 
     # Check if the CSV file exists in the charts folder
-    csv_path = Path(os.path.join("tests", charts_folder, raw_data_csv_filename))
-    assert (
-        csv_path.exists()
-    ), f"Raw data CSV file '{raw_data_csv_filename}' not found in {charts_folder}"
+    csv_path = Path(os.path.join("tests", "integration", raw_data_csv_filename))
+    assert csv_path.exists(), f"Raw data CSV file '{raw_data_csv_filename}' not found"
 
     # Check that the file has content (not empty)
     file_size = csv_path.stat().st_size

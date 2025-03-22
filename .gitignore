@@ -166,3 +166,4 @@ ExampleConfig.json
 ExampleFile.csv
 tests/testdata.csv
 tests/test_charts/*
+tests/integration/workitems.csv
