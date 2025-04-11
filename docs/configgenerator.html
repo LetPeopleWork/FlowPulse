@@ -416,8 +416,12 @@
     <input type="number" class="form-control" name="forecasts[].targetDays">
 </div>
 <div class="mb-3">
-    <label class="form-label">Remaining Backlog Query</label>
-    <textarea class="form-control" name="forecasts[].remainingBacklogQuery" rows="2"></textarea>
+    <label class="form-label">Remaining Items</label>
+    <textarea class="form-control" name="forecasts[].remainingItems" rows="2"></textarea>
+</div>
+<div class="mb-3 form-check">
+    <input type="checkbox" class="form-check-input" name="forecasts[].storeMCSResultsDiagram" id="forecast-store-mcs-results">
+    <label class="form-check-label" for="forecast-store-mcs-results">Store MCS Results Diagram</label>
 </div>
 <button type="button" class="btn btn-danger btn-sm remove-forecast">Remove</button>
 </div>
@@ -590,7 +594,8 @@
                     forecastItem.find('.target-date-type').val('Fixed Date').trigger('change');
                     forecastItem.find('[name="forecasts[].targetDate"]').val(forecast.targetDate);
                 }
-                forecastItem.find('[name="forecasts[].remainingBacklogQuery"]').val(forecast.remainingBacklogQuery);
+                forecastItem.find('[name="forecasts[].remainingItems"]').val(forecast.remainingItems);
+                forecastItem.find('[name="forecasts[].storeMCSResultsDiagram"]').prop('checked', forecast.storeMCSResultsDiagram);
                 initializeDatepicker(forecastItem.find('.datepicker'));
             });
 
@@ -670,8 +675,16 @@
             $('.forecast-item').each(function () {
                 const forecast = {
                     name: $(this).find('[name="forecasts[].name"]').val(),
-                    remainingBacklogQuery: $(this).find('[name="forecasts[].remainingBacklogQuery"]').val()
+                    storeMCSResultsDiagram: $(this).find('[name="forecasts[].storeMCSResultsDiagram"]').prop('checked')
                 };
+
+                // Handle remainingItems - convert to integer if it's a valid number
+                const remainingItemsValue = $(this).find('[name="forecasts[].remainingItems"]').val();
+                if (remainingItemsValue.trim() !== "" && !isNaN(remainingItemsValue) && parseInt(remainingItemsValue).toString() === remainingItemsValue.trim()) {
+                    forecast.remainingItems = parseInt(remainingItemsValue);
+                } else {
+                    forecast.remainingItems = remainingItemsValue;
+                }
 
                 const dateType = $(this).find('.target-date-type').val();
                 if (dateType === 'Fixed Date') {
