@@ -199,12 +199,13 @@ FlowPulse will determine what kind of forecast to run based on the configuration
 | Name                   | Description                          | Sample Value      |
 |------------------------|--------------------------------------|--------------------|
 | name           | The name of your Forecast.               | "Release 23.44" or "Sprint Goal"             |
-| remainingBacklogQuery           | The query to get the remaining items for your forecast. Note that this should contain all items that are relevant for your forecast, so most likely you want to filter out closed and removed items. This is either a JQL query if you are using Jira or a WIQL query in the case of Azure DevOps.           | issuetype in (\"Story\", \"Bug\") AND project = \"YourProject\" AND status not in (\"Done\") AND fixVersion = \"Release 24.10\" |
+| remainingItems           | The remaining items you want to forecast a completion date for (*When* forecast). Is either a number (for example: 12) or a query to get the remaining items for your forecast from your datasource. Note that this should contain all items that are relevant for your forecast, so most likely you want to filter out closed and removed items. This is either a JQL query if you are using Jira or a WIQL query in the case of Azure DevOps.           | issuetype in (\"Story\", \"Bug\") AND project = \"YourProject\" AND status not in (\"Done\") AND fixVersion = \"Release 24.10\" |
 | targetDate           | Either the date in *YYYY-mm-dd* format or the number of days in future               | "2024-10-31" / 14             |
+| storeMCSResultsDiagram           | Specifies if the forecast results should be stored next to the charts as a diagram               | *true* or *false*            |
 
 
 ## When
-If you specify a *remainingBacklogQuery*, a *When* forecast will be executed with all items will be returned by this query. See [Jira](#jira) and [Azure DevOps](#azure-devops) for details on the query.
+If you specify a *remainingItems*, a *When* forecast will be executed with all items will be returned by this query. See [Jira](#jira) and [Azure DevOps](#azure-devops) for details on the query.
 
 {: .important}
 If you are using a CSV datasource, you cannot use a *query*, as it's not supported. Instead, it will use **all** items that are not yet closed. To run a *When* forecast, just add *true*, and if you want to skip the *When*, leave it empty: *""*
@@ -216,4 +217,4 @@ If you specify a number, it will use the date that is this amount of days in the
 If you don't provide a *target date*, no "How Many" simulation will be run.
 
 ## When And How Many
-If you provide both a *remainingBacklogQuery* and a *targetDate*, both forecast types will be run. In this case, you will also get the likelihood of closing all remaining items till the specified target date.
+If you provide both the *remainingItems* and a *targetDate*, both forecast types will be run. In this case, you will also get the likelihood of closing all remaining items till the specified target date.

@@ -26,7 +26,8 @@ def sample_config():
             {"name": "source2", "query": "query2"},
         ],
         "forecasts": [
-            {"name": "forecast1", "remainingBacklogQuery": "query1", "targetDate": "2024-01-01"}
+            {"name": "forecast1", "remainingItems": "query1", "targetDate": "2024-01-01"},
+            {"name": "forecast2", "remainingItems": 20},
         ],
         "charts": [{"type": "burndown", "trendSettings": {"window": 14}}],
     }

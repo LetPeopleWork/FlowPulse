@@ -43,7 +43,7 @@ In the above example we set the *targetDate* to *14*. This means it will automat
 You can also specify a fixed Date as *targetDate*, this is useful for certain milestones that are not moving.
 
 # When
-To run a *When* forecast, you have to specify the *remainingBacklogQuery*. Using this, all remaining items for your forecasts are fetched (be aware of the [limitations of this when using a CSV file](../configuration/configuration.html#when)) and it will tell you *When* all those items are expected to be done. This is great if you have a fixed set of items remaining (examples could include all items tagged for a specific Release, or that are needed for your Sprint Goal) and want to know when this is done.
+To run a *When* forecast, you have to specify the *remainingItems*. Using this, you can specifcy all remaining items for your forecasts or they are fetched from your data srouce via query (be aware of the [limitations of this when using a CSV file](../configuration/configuration.html#when)) and it will tell you *When* all those items are expected to be done. This is great if you have a fixed set of items remaining (examples could include all items tagged for a specific Release, or that are needed for your Sprint Goal) and want to know when this is done.
 
 ```bash
 ----------------------------------------------------------------
@@ -71,7 +71,7 @@ Chance of hitting target date: 19.97
 ----------------------------------------------------------------
 ```
 
-In the above example you also see that a forecast can have both, the *remainingBacklogQuery* and the *targetDate* specified. In such a case, it's running both a *How Many* and *When* forecast, leading to giving you a probability of how likely it is to hit your target with the currently remaining items.
+In the above example you also see that a forecast can have both, the *remainingItems* and the *targetDate* specified. In such a case, it's running both a *How Many* and *When* forecast, leading to giving you a probability of how likely it is to hit your target with the currently remaining items.
 
 {: .note}
 Right now, the output of the forecast is only visible in the terminal. If you need some other output (for example in a file) to process it further, please reach out to us via Slack.

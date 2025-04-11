@@ -24,12 +24,14 @@
     "forecasts": [
         {
             "name": "Next Release",
-            "remainingBacklogQuery": "true",
-            "targetDate": 120
+            "remainingItems": 25,
+            "targetDate": 120,
+            "storeMCSResultsDiagram": true
         },
         {
             "name": "Sprint Forecast",
-            "targetDate": 14
+            "targetDate": 14,
+            "storeMCSResultsDiagram": false
         }
     ],
     "charts": [
