@@ -40,12 +40,15 @@
     "forecasts": [
         {
             "name": "Release 24.10",
-            "remainingBacklogQuery": "issuetype in (\"Story\", \"Bug\") AND project = \"YourProject\" AND status not in (\"Done\") AND fixVersion = \"Release 24.10\"",
-            "targetDate": "2024-10-31"
+            "remainingItems": "issuetype in (\"Story\", \"Bug\") AND project = \"YourProject\" AND status not in (\"Done\") AND fixVersion = \"Release 24.10\"",
+            "targetDate": "2024-10-31",
+            "storeMCSResultsDiagram": true
         },
         {
             "name": "Sprint Forecast",
-            "targetDate": 14
+            "remainingItems": 20,
+            "targetDate": 14,
+            "storeMCSResultsDiagram": false
         }
     ],
     "charts": [

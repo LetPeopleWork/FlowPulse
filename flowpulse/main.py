@@ -18,27 +18,36 @@ def run_forecast(
     forecast_config, today, throughput_history, monte_carlo_service, work_item_service
 ):
     print(SMALL_SEPERATOR_LINE)
-    print("Running Forecast for {0}".format(forecast_config["name"]))
+    forecast_name = forecast_config["name"]
+    print("Running Forecast for {0}".format(forecast_name))
 
     target_date = None
     run_mc_when = False
     run_mc_how_many = False
 
-    remaining_items_query = config_service.get_remaining_backlog_query(forecast_config)
+    remaining_items_parameter = config_service.get_remaining_backlog(forecast_config)
     target_date = config_service.get_target_date(forecast_config, today)
 
-    if remaining_items_query:
+    chart_name = None
+    if config_service.get_store_mcs_results_diagram(forecast_config):
+        chart_name = forecast_name
+
+    if remaining_items_parameter:
         run_mc_when = True
 
     if target_date:
         run_mc_how_many = True
 
     if run_mc_how_many:
-        monte_carlo_service.how_many(target_date, throughput_history)
+        monte_carlo_service.how_many(target_date, throughput_history, chart_name)
 
     if run_mc_when:
-        remaining_items = work_item_service.get_items(remaining_items_query)
-        monte_carlo_service.when(len(remaining_items), throughput_history, target_date)
+        remaining_items = remaining_items_parameter
+
+        if isinstance(remaining_items_parameter, str):
+            remaining_items = len(work_item_service.get_items(remaining_items_parameter))
+
+        monte_carlo_service.when(remaining_items, throughput_history, target_date, chart_name)
 
 
 def create_forecasts(
@@ -60,7 +69,7 @@ def create_forecasts(
         print("No closed items found with specified configuration - skipping forecasts")
         return
 
-    monte_carlo_service = MonteCarloService(history, today.date(), False)
+    monte_carlo_service = MonteCarloService(history, today.date())
     throughput_history = monte_carlo_service.create_closed_items_history(closed_items)
 
     for forecast_config in forecasts:

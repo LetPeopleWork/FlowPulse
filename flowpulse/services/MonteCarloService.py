@@ -12,7 +12,7 @@ import os
 
 class MonteCarloService:
 
-    def __init__(self, history_in_days, today=date.today(), save_charts=False, trials=10000):
+    def __init__(self, history_in_days, today=date.today(), trials=10000):
         self.trials = trials
         self.history_in_days = history_in_days
         self.today = today
@@ -24,7 +24,6 @@ class MonteCarloService:
 
         # Save the plot as an image in the "Charts" folder next to the script
         self.charts_folder = os.path.join(os.getcwd(), "Charts")
-        self.save_charts = save_charts
 
         self.current_date = datetime.now().strftime("%d.%m.%Y")
 
@@ -32,7 +31,7 @@ class MonteCarloService:
         logo_path = os.path.join(script_dir, "logo.png")
         self.logo = mpimg.imread(logo_path)
 
-        if save_charts and not os.path.exists(self.charts_folder):
+        if not os.path.exists(self.charts_folder):
             os.makedirs(self.charts_folder)
 
     def create_closed_items_history(self, items):
@@ -46,19 +45,6 @@ class MonteCarloService:
 
         closed_items_hist = closed_items["closed_date"].value_counts().to_dict()
 
-        if self.save_charts:
-            tp_run_chart_path = os.path.join(self.charts_folder, "Throughput_Run_Chart.png")
-            plt.figure(figsize=(15, 9))
-            plt.gca().set_ylim(bottom=0)
-
-            print("Storing Chart at {0}".format(tp_run_chart_path))
-            plt.bar(list(closed_items_hist.keys()), closed_items_hist.values(), color="b")
-
-            self.add_timestamp(plt)
-            self.add_logo(plt)
-
-            plt.savefig(tp_run_chart_path)
-
         print(
             "Found {0} items that were closed in the last {1} days".format(
                 len(closed_items), self.history_in_days
@@ -67,7 +53,7 @@ class MonteCarloService:
 
         return closed_items_hist
 
-    def how_many(self, target_date, closed_items_history):
+    def how_many(self, target_date, closed_items_history, chart_name=None):
         print("--------------------------------")
         print(
             "Running Monte Carlo Simulation - How Many items will be done till {0}".format(
@@ -79,9 +65,9 @@ class MonteCarloService:
             target_date, closed_items_history
         )
 
-        return self.__get_predictions_howmany(monte_carlo_simulation_results)
+        return self.__get_predictions_howmany(monte_carlo_simulation_results, chart_name)
 
-    def when(self, remaining_items, closed_items_history, target_date=None):
+    def when(self, remaining_items, closed_items_history, target_date=None, chart_name=None):
         print("--------------------------------")
         print(
             "Running Monte Carlo Simulation - When will {0} items be done".format(remaining_items)
@@ -102,7 +88,9 @@ class MonteCarloService:
             predicted_date_85,
             predicted_date_95,
             target_date_likelyhood,
-        ) = self.__get_predictions_when(monte_carlo_simulation_results, days_to_target_date)
+        ) = self.__get_predictions_when(
+            monte_carlo_simulation_results, days_to_target_date, chart_name
+        )
         return (
             predicted_date_50,
             predicted_70,
@@ -133,7 +121,7 @@ class MonteCarloService:
 
         return mc_results
 
-    def __get_predictions_when(self, mc_results, days_to_target_date=None):
+    def __get_predictions_when(self, mc_results, days_to_target_date=None, chart_name=None):
         sorted_dict = {k: v for k, v in sorted(mc_results.items())}
 
         percentile_50_target = self.trials * 0.5
@@ -192,7 +180,7 @@ class MonteCarloService:
             prediction_targetdate = (100 / self.trials) * trials_in_time
             print("Chance of hitting target date: {0}".format(prediction_targetdate))
 
-        if self.save_charts:
+        if chart_name:
             vertical_lines_data = [
                 (percentile_50, "50th Percentile", "red"),
                 (percentile_70, "70th Percentile", "orange"),
@@ -200,7 +188,7 @@ class MonteCarloService:
                 (percentile_95, "95th Percentile", "darkgreen"),
             ]
             plt.figure(figsize=(15, 9))
-            when_chart_path = os.path.join(self.charts_folder, "MC_When.png")
+            when_chart_path = os.path.join(self.charts_folder, "{0}_When.png".format(chart_name))
             print("Storing Chart at {0}".format(when_chart_path))
             plt.bar(list(sorted_dict.keys()), sorted_dict.values(), color="g")
 
@@ -251,7 +239,7 @@ class MonteCarloService:
 
         return mc_results
 
-    def __get_predictions_howmany(self, mc_results):
+    def __get_predictions_howmany(self, mc_results, chart_name):
         sorted_dict = {k: v for k, v in sorted(mc_results.items(), reverse=True)}
 
         percentile_50_target = self.trials * self.percentile_50
@@ -285,7 +273,7 @@ class MonteCarloService:
         print("85 Percentile: {0} Items".format(percentile_85))
         print("95 Percentile: {0} Items".format(percentile_95))
 
-        if self.save_charts:
+        if chart_name:
             vertical_lines_data = [
                 (percentile_50, "50th Percentile", "red"),
                 (percentile_70, "70th Percentile", "orange"),
@@ -294,7 +282,9 @@ class MonteCarloService:
             ]
 
             plt.figure(figsize=(15, 9))
-            how_many_chart_path = os.path.join(self.charts_folder, "MC_HowMany.png")
+            how_many_chart_path = os.path.join(
+                self.charts_folder, "{0}_HowMany.png".format(chart_name)
+            )
             print("Storing Chart at {0}".format(how_many_chart_path))
             plt.bar(list(sorted_dict.keys()), sorted_dict.values(), color="g")
 

@@ -118,8 +118,29 @@ class ConfigService:
     def get_forecasts(self, config):
         return config.get("forecasts", [])
 
-    def get_remaining_backlog_query(self, forecast_config):
-        return forecast_config.get("remainingBacklogQuery", None)
+    def get_remaining_backlog(self, forecast_config):
+        parameters = ["remainingBacklogQuery", "remainingItems"]
+
+        result = None
+
+        for parameter in parameters:
+            if parameter in forecast_config:
+                remaining_items = forecast_config.get(parameter, None)
+                if remaining_items:
+                    if isinstance(remaining_items, int):
+                        result = int(remaining_items)
+                    elif isinstance(remaining_items, str):
+                        if remaining_items.lower() == "true":
+                            result = None
+                        else:
+                            result = remaining_items
+                    break
+
+        return result
+
+    def get_store_mcs_results_diagram(self, forecast_config):
+        store_mcs_results_diagram = forecast_config.get("storeMCSResultsDiagram", False)
+        return store_mcs_results_diagram
 
     def get_target_date(self, forecast_config, today):
         target_date = forecast_config.get("targetDate", None)
