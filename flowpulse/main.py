@@ -69,7 +69,9 @@ def create_forecasts(
         print("No closed items found with specified configuration - skipping forecasts")
         return
 
-    monte_carlo_service = MonteCarloService(history, today.date())
+    charts_folder = config_service.get_charts_folder(config)
+    monte_carlo_service = MonteCarloService(history, charts_folder, today.date())
+
     throughput_history = monte_carlo_service.create_closed_items_history(closed_items)
 
     for forecast_config in forecasts:

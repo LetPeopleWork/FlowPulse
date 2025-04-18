@@ -12,7 +12,7 @@ import os
 
 class MonteCarloService:
 
-    def __init__(self, history_in_days, today=date.today(), trials=10000):
+    def __init__(self, history_in_days, charts_folder, today=date.today(), trials=10000):
         self.trials = trials
         self.history_in_days = history_in_days
         self.today = today
@@ -22,9 +22,7 @@ class MonteCarloService:
         self.percentile_85 = 0.85
         self.percentile_95 = 0.95
 
-        # Save the plot as an image in the "Charts" folder next to the script
-        self.charts_folder = os.path.join(os.getcwd(), "Charts")
-
+        self.charts_folder = charts_folder
         self.current_date = datetime.now().strftime("%d.%m.%Y")
 
         script_dir = os.path.dirname(os.path.abspath(__file__))
